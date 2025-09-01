@@ -1,0 +1,51 @@
+# Insider Test Automation Project - Python Dependencies
+
+# Core Testing Framework
+pytest==7.4.3
+pytest-html==4.1.1
+pytest-xdist==3.3.1
+
+# Selenium WebDriver
+selenium==4.15.2
+webdriver-manager==4.0.1
+
+# Test Data and Utilities
+faker==19.12.0
+python-dotenv==1.0.0
+
+# Reporting and Logging
+allure-pytest==2.13.2
+pytest-json-report==1.5.0
+
+# Screenshot and Image Processing
+Pillow==10.1.0
+
+# Configuration Management
+pyyaml==6.0.1
+configparser==6.0.0
+
+# Parallel Testing
+pytest-parallel==0.1.1
+
+# Browser Automation Enhancements
+selenium-wire==5.1.0
+
+# Development and Code Quality
+black==23.11.0
+flake8==6.1.0
+pytest-cov==4.1.0
+
+# Optional: For advanced reporting
+pytest-metadata==3.0.0
+pytest-rerunfailures==12.0
+
+# Optional: For API testing (if needed)
+requests==2.31.0
+
+# Optional: For database connections (if needed)
+# pymongo==4.6.0
+# psycopg2-binary==2.9.9
+
+# Version pinning for stability
+setuptools>=65.0.0
+wheel>=0.38.0

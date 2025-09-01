@@ -1,0 +1,92 @@
+# Sistem klasörleri - pytest'in erişemediği yerler
+My Music/
+My Pictures/
+My Videos/
+Desktop/
+Downloads/
+Documents/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Screenshots (büyük dosyalar)
+screenshots/failed/
+screenshots/passed/
+screenshots/general/
+
+# Reports (test sırasında oluşur)
+reports/
+html/
+json/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Distribution
+build/
+dist/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints
+
+# Node modules (eğer JavaScript kullanıyorsanız)
+node_modules/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Secrets
+secrets.json
+config.json
+.env.local

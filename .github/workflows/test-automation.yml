@@ -1,0 +1,288 @@
+name: Insider Test Automation Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run tests daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      browser:
+        description: 'Browser to test'
+        required: true
+        default: 'chrome'
+        type: choice
+        options:
+        - chrome
+        - firefox
+        - safari
+        - all
+      test_suite:
+        description: 'Test suite to run'
+        required: true
+        default: 'critical'
+        type: choice
+        options:
+        - critical
+        - smoke
+        - regression
+        - performance
+        - cross_browser
+        - all
+
+jobs:
+  test-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox]
+        test-type: [critical, performance]
+        include:
+          - browser: chrome
+            test-type: cross_browser
+          - browser: firefox
+            test-type: cross_browser
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Set up Chrome
+      if: matrix.browser == 'chrome'
+      uses: browser-actions/setup-chrome@latest
+      with:
+        chrome-version: stable
+    
+    - name: Set up Firefox
+      if: matrix.browser == 'firefox'
+      uses: browser-actions/setup-firefox@latest
+      with:
+        firefox-version: latest
+    
+    - name: Create directories
+      run: |
+        mkdir -p screenshots/failed
+        mkdir -p screenshots/passed
+        mkdir -p screenshots/evidence
+        mkdir -p reports/html
+        mkdir -p reports/json
+    
+    - name: Run Critical Tests
+      if: matrix.test-type == 'critical'
+      run: |
+        pytest tests/test_popup_functionality.py \
+          --browser=${{ matrix.browser }} \
+          --headless \
+          -m critical \
+          --html=reports/html/critical-${{ matrix.browser }}-report.html \
+          --self-contained-html \
+          --json-report \
+          --json-report-file=reports/json/critical-${{ matrix.browser }}-report.json \
+          -v
+      continue-on-error: true
+    
+    - name: Run Performance Tests
+      if: matrix.test-type == 'performance'
+      run: |
+        pytest tests/test_performance_responsive.py \
+          --browser=${{ matrix.browser }} \
+          --headless \
+          -m performance \
+          --html=reports/html/performance-${{ matrix.browser }}-report.html \
+          --self-contained-html \
+          --json-report \
+          --json-report-file=reports/json/performance-${{ matrix.browser }}-report.json \
+          -v
+      continue-on-error: true
+    
+    - name: Run Cross-Browser Tests
+      if: matrix.test-type == 'cross_browser'
+      run: |
+        pytest tests/test_cross_browser.py \
+          --browser=${{ matrix.browser }} \
+          --headless \
+          -m cross_browser \
+          --html=reports/html/cross-browser-${{ matrix.browser }}-report.html \
+          --self-contained-html \
+          --json-report \
+          --json-report-file=reports/json/cross-browser-${{ matrix.browser }}-report.json \
+          -v
+      continue-on-error: true
+    
+    - name: Upload Test Reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-reports-${{ matrix.browser }}-${{ matrix.test-type }}
+        path: |
+          reports/
+          screenshots/
+        retention-days: 30
+    
+    - name: Upload Failed Screenshots
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: failed-screenshots-${{ matrix.browser }}-${{ matrix.test-type }}
+        path: screenshots/failed/
+        retention-days: 30
+    
+    - name: Comment PR with Results
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const path = 'reports/json/critical-${{ matrix.browser }}-report.json';
+          
+          if (fs.existsSync(path)) {
+            const report = JSON.parse(fs.readFileSync(path, 'utf8'));
+            const summary = `
+            ## Test Results - ${{ matrix.browser }} (${{ matrix.test-type }})
+            
+            - **Total Tests**: ${report.summary.total}
+            - **Passed**: ${report.summary.passed} ✅
+            - **Failed**: ${report.summary.failed} ❌
+            - **Skipped**: ${report.summary.skipped} ⏭️
+            - **Success Rate**: ${((report.summary.passed / report.summary.total) * 100).toFixed(1)}%
+            
+            ${report.summary.failed > 0 ? '⚠️ **Known Issues**: Based on manual testing, failures are expected due to critical bugs (BUG001-BUG010)' : ''}
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: summary
+            });
+          }
+
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Run Bandit Security Scan
+      run: |
+        pip install bandit
+        bandit -r . -f json -o security-report.json || true
+    
+    - name: Upload Security Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-report
+        path: security-report.json
+
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install quality tools
+      run: |
+        pip install flake8 black pytest-cov
+    
+    - name: Run Black formatter check
+      run: black --check --diff .
+      continue-on-error: true
+    
+    - name: Run Flake8 linter
+      run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+      continue-on-error: true
+    
+    - name: Run tests with coverage
+      run: |
+        pip install -r requirements.txt
+        pytest --cov=pages --cov=utils --cov-report=html --cov-report=term-missing
+      continue-on-error: true
+    
+    - name: Upload Coverage Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: htmlcov/
+
+  generate-summary:
+    needs: [test-matrix, security-scan, code-quality]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v3
+    
+    - name: Generate Test Summary
+      run: |
+        echo "# Insider Test Automation Summary" > test-summary.md
+        echo "" >> test-summary.md
+        echo "## Test Execution Results" >> test-summary.md
+        echo "" >> test-summary.md
+        
+        # Process test reports
+        for report in test-reports-*/reports/json/*.json; do
+          if [ -f "$report" ]; then
+            echo "Processing $report"
+            # Add report summary (simplified)
+            echo "- Report: $(basename $report)" >> test-summary.md
+          fi
+        done
+        
+        echo "" >> test-summary.md
+        echo "## Known Issues from Manual Testing" >> test-summary.md
+        echo "" >> test-summary.md
+        echo "- **BUG001**: URL parameter dependency (Critical)" >> test-summary.md
+        echo "- **BUG002**: Add to Cart not working (Critical)" >> test-summary.md
+        echo "- **BUG004**: Mobile 0% functionality (Critical)" >> test-summary.md
+        echo "- **BUG005**: Firefox/Safari complete failure (Critical)" >> test-summary.md
+        echo "- **BUG006**: Performance 4.49s delay (High)" >> test-summary.md
+        echo "- **BUG007**: 90% incorrect product mapping (Critical)" >> test-summary.md
+        echo "" >> test-summary.md
+        echo "## Production Readiness: ❌ NOT READY" >> test-summary.md
+        echo "" >> test-summary.md
+        echo "The system requires critical bug fixes before production deployment." >> test-summary.md
+    
+    - name: Upload Summary
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-execution-summary
+        path: test-summary.md
+
+  notify-teams:
+    needs: [generate-summary]
+    runs-on: ubuntu-latest
+    if: always() && (github.ref == 'refs/heads/main' || github.event_name == 'schedule')
+    steps:
+    - name: Notify Teams (Mock)
+      run: |
+        echo "🔔 Test execution completed"
+        echo "📊 Results available in artifacts"
+        echo "⚠️ System not ready for production due to critical bugs"
+        # In real implementation, this would send notifications to Slack/Teams/Email
