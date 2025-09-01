@@ -84,7 +84,7 @@ class TestExecutor:
         
         cmd = [
             "pytest",
-            "tests/test_popup_functionality.py",
+            "tests/popup/test_popup_functionality.py",
             f"--browser={browser}",
             "-m", "critical",
             "--html=reports/html/critical-report.html",
@@ -116,7 +116,7 @@ class TestExecutor:
             
             cmd = [
                 "pytest",
-                "tests/test_cross_browser.py",
+                "tests/cross_browser/test_cross_browser.py",
                 f"--browser={browser}",
                 "-m", "cross_browser",
                 f"--html=reports/html/cross-browser-{browser}-report.html",
@@ -139,7 +139,7 @@ class TestExecutor:
         
         cmd = [
             "pytest",
-            "tests/test_performance_responsive.py",
+            "tests/mobile/test_performance_responsive.py",
             f"--browser={browser}",
             "-m", "performance",
             "--html=reports/html/performance-report.html",
@@ -161,7 +161,7 @@ class TestExecutor:
         
         cmd = [
             "pytest",
-            "tests/test_performance_responsive.py",
+            "tests/mobile/test_performance_responsive.py",
             f"--browser={browser}",
             "-m", "mobile",
             "--html=reports/html/mobile-report.html",
@@ -195,6 +195,75 @@ class TestExecutor:
         
         result = self._execute_pytest_command(cmd, "smoke")
         self.results["test_results"]["smoke"] = result
+        
+        return result
+    
+    def run_popup_tests(self, browser="chrome", headless=True):
+        """Run popup-specific functionality tests."""
+        print(f"\n🎯 Running Popup Tests (Browser: {browser})")
+        
+        cmd = [
+            "pytest",
+            "tests/popup/",
+            f"--browser={browser}",
+            "--html=reports/html/popup-report.html",
+            "--self-contained-html",
+            "--json-report",
+            "--json-report-file=reports/json/popup-report.json",
+            "-v"
+        ]
+        
+        if headless:
+            cmd.append("--headless")
+        
+        result = self._execute_pytest_command(cmd, "popup")
+        self.results["test_results"]["popup"] = result
+        
+        return result
+    
+    def run_unit_tests(self, browser="chrome", headless=True):
+        """Run unit tests for individual components."""
+        print(f"\n🧪 Running Unit Tests (Browser: {browser})")
+        
+        cmd = [
+            "pytest",
+            "tests/unit/",
+            f"--browser={browser}",
+            "--html=reports/html/unit-report.html",
+            "--self-contained-html",
+            "--json-report",
+            "--json-report-file=reports/json/unit-report.json",
+            "-v"
+        ]
+        
+        if headless:
+            cmd.append("--headless")
+        
+        result = self._execute_pytest_command(cmd, "unit")
+        self.results["test_results"]["unit"] = result
+        
+        return result
+    
+    def run_integration_tests(self, browser="chrome", headless=True):
+        """Run integration tests for component interactions."""
+        print(f"\n🔗 Running Integration Tests (Browser: {browser})")
+        
+        cmd = [
+            "pytest",
+            "tests/integration/",
+            f"--browser={browser}",
+            "--html=reports/html/integration-report.html",
+            "--self-contained-html",
+            "--json-report",
+            "--json-report-file=reports/json/integration-report.json",
+            "-v"
+        ]
+        
+        if headless:
+            cmd.append("--headless")
+        
+        result = self._execute_pytest_command(cmd, "integration")
+        self.results["test_results"]["integration"] = result
         
         return result
     
@@ -576,7 +645,7 @@ class TestExecutor:
 def main():
     """Main execution function."""
     parser = argparse.ArgumentParser(description="Insider Test Automation Executor")
-    parser.add_argument("--suite", choices=["critical", "smoke", "performance", "cross-browser", "mobile", "regression", "all"], 
+    parser.add_argument("--suite", choices=["critical", "smoke", "performance", "cross-browser", "mobile", "regression", "all", "popup", "unit", "integration"], 
                        default="critical", help="Test suite to run")
     parser.add_argument("--browser", choices=["chrome", "firefox", "safari"], default="chrome", help="Browser to use")
     parser.add_argument("--headless", action="store_true", help="Run in headless mode")
@@ -605,6 +674,12 @@ def main():
             executor.run_mobile_tests(args.browser)
         elif args.suite == "regression":
             executor.run_full_regression(args.browser)
+        elif args.suite == "popup":
+            executor.run_popup_tests(args.browser, args.headless)
+        elif args.suite == "unit":
+            executor.run_unit_tests(args.browser, args.headless)
+        elif args.suite == "integration":
+            executor.run_integration_tests(args.browser, args.headless)
         elif args.suite == "all":
             executor.run_full_regression(args.browser)
     
