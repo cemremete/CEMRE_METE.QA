@@ -55,7 +55,7 @@ Thumbs.db
 *.log
 logs/
 
-# Screenshots (büyük dosyalar)
+# Screenshots (büyük dosyalar - test evidence olarak saklanabilir)
 screenshots/failed/
 screenshots/passed/
 screenshots/general/
@@ -89,4 +89,25 @@ node_modules/
 # Secrets
 secrets.json
 config.json
+# WebDriver executables
+chromedriver/
+geckodriver/
+msedgedriver/
+webdriver/
+
+# Browser profiles and data
+browser_profiles/
+chrome_user_data/
+firefox_profile/
+
+# Test data files (if sensitive)
+test_data/private/
+sensitive_data/
+
+# Allure reports
+allure-results/
+allure-report/
+
+# Locust load testing
+.locust/
 .env.local
