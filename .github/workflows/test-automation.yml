@@ -73,11 +73,26 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         
-    - name: Fix libgconf dependency issues
+    - name: Fix package compatibility issues
       run: |
-        # Create a dummy libgconf-2-4 package to prevent installation errors
+        # Install modern packages first
         sudo apt-get update
+        sudo apt-get install -y libasound2t64 libgtk-3-0 libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxi6 libxtst6 libnss3 libcups2 libxss1 libxrandr2 libpangocairo-1.0-0 libatk1.0-0 libcairo-gobject2 libgdk-pixbuf2.0-0
+        
+        # Create dummy packages for deprecated dependencies
         sudo apt-get install -y equivs
+        
+        # Create dummy libasound2 package
+        echo "Package: libasound2" > libasound2-dummy
+        echo "Version: 1.0" >> libasound2-dummy
+        echo "Architecture: all" >> libasound2-dummy
+        echo "Maintainer: CI <ci@example.com>" >> libasound2-dummy
+        echo "Description: Dummy package to replace deprecated libasound2" >> libasound2-dummy
+        echo "Depends: libasound2t64" >> libasound2-dummy
+        equivs-build libasound2-dummy
+        sudo dpkg -i libasound2_1.0_all.deb || true
+        
+        # Create dummy libgconf-2-4 package
         echo "Package: libgconf-2-4" > libgconf-dummy
         echo "Version: 1.0" >> libgconf-dummy
         echo "Architecture: all" >> libgconf-dummy
@@ -114,20 +129,20 @@ jobs:
         wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
         sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
         sudo apt-get update
-        sudo apt-get install -y google-chrome-stable libgtk-3-0 libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxi6 libxtst6 libnss3 libcups2 libxss1 libxrandr2 libasound2t64 libpangocairo-1.0-0 libatk1.0-0 libcairo-gobject2 libgdk-pixbuf2.0-0
+        sudo apt-get install -y google-chrome-stable
         google-chrome --version
 
     - name: Install Firefox
       if: matrix.browser == 'firefox'
       run: |
         sudo apt-get update
-        sudo apt-get install -y firefox libgtk-3-0 libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxi6 libxtst6 libnss3 libcups2 libxss1 libxrandr2 libasound2t64 libpangocairo-1.0-0 libatk1.0-0 libcairo-gobject2 libgdk-pixbuf2.0-0
+        sudo apt-get install -y firefox
         firefox --version
 
-    - name: Install Xvfb and GUI dependencies for headless support
+    - name: Install Xvfb for headless support
       run: |
         sudo apt-get update
-        sudo apt-get install -y xvfb libgtk-3-0 libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxi6 libxtst6 libnss3 libcups2 libxss1 libxrandr2 libasound2t64 libpangocairo-1.0-0 libatk1.0-0 libcairo-gobject2 libgdk-pixbuf2.0-0
+        sudo apt-get install -y xvfb
 
     - name: Create directories
       run: |
