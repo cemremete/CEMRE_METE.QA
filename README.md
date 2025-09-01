@@ -164,7 +164,7 @@ pytest -n 4
 # Generate HTML report
 pytest tests/test_popup_functionality.py --html=reports/test_report.html --self-contained-html
 
-# Generate JSON report  
+# Generate JSON report
 pytest tests/test_popup_functionality.py --json-report --json-report-file=reports/test_report.json
 
 # Generate both reports
@@ -296,22 +296,22 @@ jobs:
     strategy:
       matrix:
         browser: [chrome, firefox]
-    
+
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: 3.9
-    
+
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-    
+
     - name: Run tests
       run: |
         pytest --browser=${{ matrix.browser }} --headless -v
-    
+
     - name: Upload screenshots
       uses: actions/upload-artifact@v2
       if: failure()
@@ -394,8 +394,8 @@ This project is proprietary to Insider company for internal testing purposes.
 
 ---
 
-**Last Updated:** September 1, 2025  
-**Version:** 1.0.0  
-**Test Execution Date:** September 1, 2025  
-**Maintainer:** QA Automation Team  
+**Last Updated:** September 1, 2025
+**Version:** 1.0.0
+**Test Execution Date:** September 1, 2025
+**Maintainer:** QA Automation Team
 **Project Status:** ✅ COMPLETED - All bugs successfully reproduced
