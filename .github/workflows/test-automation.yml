@@ -1,4 +1,4 @@
-name: Insider Test Automation Pipeline
+name: Insider Test Automation Pipeline - Updated
 
 on:
   push:
