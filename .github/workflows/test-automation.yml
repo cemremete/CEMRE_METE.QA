@@ -38,6 +38,8 @@ jobs:
     env:
       DISPLAY: :99
       PYTHONPATH: ${{ github.workspace }}
+      ACTIONS_STEP_DEBUG: true
+      ACTIONS_RUNNER_DEBUG: true
     strategy:
       fail-fast: false
       matrix:
@@ -86,11 +88,23 @@ jobs:
 
     - name: Verify setup
       run: |
+        echo "=== System Information ==="
+        echo "OS: $(lsb_release -d)"
+        echo "Kernel: $(uname -r)"
+        echo "Architecture: $(uname -m)"
         echo "Python version: $(python --version)"
         echo "Pip version: $(pip --version)"
         echo "Working directory: $(pwd)"
+        echo "=== Environment Variables ==="
+        echo "DISPLAY: $DISPLAY"
+        echo "PYTHONPATH: $PYTHONPATH"
+        echo "=== Directory Contents ==="
         ls -la
-        which google-chrome || which firefox || echo "Browser not found"
+        echo "=== Browser Detection ==="
+        which google-chrome && google-chrome --version || echo "Chrome not found"
+        which firefox && firefox --version || echo "Firefox not found"
+        echo "=== Package Status ==="
+        dpkg -l | grep -E "(libgtk|libx11|libnss|libgconf)" || echo "GUI packages not found"
 
     - name: Install Chrome
       if: matrix.browser == 'chrome'
@@ -123,13 +137,23 @@ jobs:
 
     - name: Start Xvfb
       run: |
+        echo "=== Starting Xvfb ==="
         sudo Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
         sleep 3
+        echo "=== Xvfb Process Check ==="
+        ps aux | grep Xvfb || echo "Xvfb not running"
+        echo "=== Display Test ==="
+        export DISPLAY=:99
+        xdpyinfo || echo "Display not accessible"
 
     - name: Run Critical Tests
       if: matrix.test-type == 'critical'
       run: |
-        echo "Running critical tests on ${{ matrix.browser }}"
+        echo "=== Running Critical Tests on ${{ matrix.browser }} ==="
+        echo "Test command: pytest tests/ --browser=${{ matrix.browser }} --headless -m critical"
+        echo "=== Pre-test Environment ==="
+        ps aux | grep -E "(chrome|firefox|Xvfb)" || echo "No browser processes"
+        echo "=== Running Tests ==="
         pytest tests/ \
           --browser=${{ matrix.browser }} \
           --headless \
@@ -139,13 +163,18 @@ jobs:
           --json-report \
           --json-report-file=reports/json/critical-${{ matrix.browser }}-report.json \
           -v \
-          --tb=short
+          --tb=long \
+          --capture=no \
+          --log-cli-level=DEBUG
+        echo "=== Post-test Process Check ==="
+        ps aux | grep -E "(chrome|firefox)" || echo "No browser processes after test"
       continue-on-error: true
 
     - name: Run Performance Tests
       if: matrix.test-type == 'performance'
       run: |
-        echo "Running performance tests on ${{ matrix.browser }}"
+        echo "=== Running Performance Tests on ${{ matrix.browser }} ==="
+        echo "Test command: pytest tests/ --browser=${{ matrix.browser }} --headless -m performance"
         pytest tests/ \
           --browser=${{ matrix.browser }} \
           --headless \
@@ -155,13 +184,16 @@ jobs:
           --json-report \
           --json-report-file=reports/json/performance-${{ matrix.browser }}-report.json \
           -v \
-          --tb=short
+          --tb=long \
+          --capture=no \
+          --log-cli-level=DEBUG
       continue-on-error: true
 
     - name: Run Cross-Browser Tests
       if: matrix.test-type == 'cross_browser'
       run: |
-        echo "Running cross-browser tests on ${{ matrix.browser }}"
+        echo "=== Running Cross-Browser Tests on ${{ matrix.browser }} ==="
+        echo "Test command: pytest tests/ --browser=${{ matrix.browser }} --headless -m cross_browser"
         pytest tests/ \
           --browser=${{ matrix.browser }} \
           --headless \
@@ -171,7 +203,9 @@ jobs:
           --json-report \
           --json-report-file=reports/json/cross-browser-${{ matrix.browser }}-report.json \
           -v \
-          --tb=short
+          --tb=long \
+          --capture=no \
+          --log-cli-level=DEBUG
       continue-on-error: true
 
     - name: Upload Test Reports
