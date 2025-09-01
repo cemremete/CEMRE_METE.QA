@@ -254,6 +254,39 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "performance: mark test as performance test"
     )
+    config.addinivalue_line(
+        "markers", "cross_browser: cross-browser compatibility tests"
+    )
+    config.addinivalue_line(
+        "markers", "responsive: responsive design tests"
+    )
+    config.addinivalue_line(
+        "markers", "browser: general browser tests"
+    )
+    config.addinivalue_line(
+        "markers", "tablet: tablet device tests"
+    )
+    config.addinivalue_line(
+        "markers", "ui: user interface tests"
+    )
+    config.addinivalue_line(
+        "markers", "functional: functional tests"
+    )
+    config.addinivalue_line(
+        "markers", "negative: negative test cases"
+    )
+    config.addinivalue_line(
+        "markers", "edge_case: edge case scenarios"
+    )
+    config.addinivalue_line(
+        "markers", "accessibility: accessibility tests"
+    )
+    config.addinivalue_line(
+        "markers", "memory: memory leak tests"
+    )
+    config.addinivalue_line(
+        "markers", "slow: tests that take longer than 30 seconds"
+    )
 
 
 def pytest_collection_modifyitems(config, items):

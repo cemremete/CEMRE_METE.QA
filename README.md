@@ -107,6 +107,45 @@ pytest --version
 python -c "import selenium; print(f'Selenium version: {selenium.__version__}')"
 ```
 
+### 5. VS Code Setup (Recommended)
+
+For the best development experience, we recommend using Visual Studio Code:
+
+#### Install Recommended Extensions:
+1. **Python** (Microsoft) - Python language support
+2. **Pylint** - Code linting and error detection
+3. **Python Docstring Generator** - Auto-generate docstrings
+4. **GitLens** - Enhanced Git capabilities
+5. **Test Explorer** - Run and debug tests
+6. **Python Test Explorer** - Pytest integration
+
+#### Configure Python Interpreter:
+1. Open Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`)
+2. Type "Python: Select Interpreter"
+3. Choose the virtual environment (`venv` or `env`)
+
+#### Enable Testing:
+1. Open Test Explorer (`Ctrl+Shift+P` → "Test: Run All Tests")
+2. Configure test settings for pytest
+3. Set test discovery to `tests/` directory
+
+#### Useful VS Code Settings:
+```json
+{
+    "python.defaultInterpreterPath": "./venv/Scripts/python.exe",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.formatting.provider": "black",
+    "python.formatting.blackArgs": ["--line-length", "100"],
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": ["tests"],
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    }
+}
+```
+
 ## 🧪 Running Tests
 
 ### Basic Test Execution
