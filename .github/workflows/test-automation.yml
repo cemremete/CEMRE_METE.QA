@@ -70,6 +70,19 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        
+    - name: Fix libgconf dependency issues
+      run: |
+        # Create a dummy libgconf-2-4 package to prevent installation errors
+        sudo apt-get update
+        sudo apt-get install -y equivs
+        echo "Package: libgconf-2-4" > libgconf-dummy
+        echo "Version: 1.0" >> libgconf-dummy
+        echo "Architecture: all" >> libgconf-dummy
+        echo "Maintainer: CI <ci@example.com>" >> libgconf-dummy
+        echo "Description: Dummy package to replace deprecated libgconf-2-4" >> libgconf-dummy
+        equivs-build libgconf-dummy
+        sudo dpkg -i libgconf-2-4_1.0_all.deb || true
 
     - name: Verify setup
       run: |
@@ -87,20 +100,20 @@ jobs:
         wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
         sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
         sudo apt-get update
-        sudo apt-get install -y google-chrome-stable
+        sudo apt-get install -y google-chrome-stable libgtk-3-0 libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxi6 libxtst6 libnss3 libcups2 libxss1 libxrandr2 libasound2 libpangocairo-1.0-0 libatk1.0-0 libcairo-gobject2 libgdk-pixbuf2.0-0
         google-chrome --version
 
     - name: Install Firefox
       if: matrix.browser == 'firefox'
       run: |
         sudo apt-get update
-        sudo apt-get install -y firefox
+        sudo apt-get install -y firefox libgtk-3-0 libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxi6 libxtst6 libnss3 libcups2 libxss1 libxrandr2 libasound2 libpangocairo-1.0-0 libatk1.0-0 libcairo-gobject2 libgdk-pixbuf2.0-0
         firefox --version
 
-    - name: Install Xvfb for headless support
+    - name: Install Xvfb and GUI dependencies for headless support
       run: |
         sudo apt-get update
-        sudo apt-get install -y xvfb
+        sudo apt-get install -y xvfb libgtk-3-0 libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxi6 libxtst6 libnss3 libcups2 libxss1 libxrandr2 libasound2 libpangocairo-1.0-0 libatk1.0-0 libcairo-gobject2 libgdk-pixbuf2.0-0
 
     - name: Create directories
       run: |
