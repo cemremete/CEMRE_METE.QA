@@ -77,24 +77,15 @@ jobs:
         
     - name: Fix package compatibility issues
       run: |
-        # Install modern packages first
+        # Fix any broken packages first
         sudo apt-get update
+        sudo apt --fix-broken install -y || true
+        
+        # Install modern packages
         sudo apt-get install -y libasound2t64 libgtk-3-0 libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxi6 libxtst6 libnss3 libcups2 libxss1 libxrandr2 libpangocairo-1.0-0 libatk1.0-0 libcairo-gobject2 libgdk-pixbuf2.0-0
         
-        # Create dummy packages for deprecated dependencies
+        # Create only libgconf dummy package (avoid libasound2 conflict)
         sudo apt-get install -y equivs
-        
-        # Create dummy libasound2 package
-        echo "Package: libasound2" > libasound2-dummy
-        echo "Version: 1.0" >> libasound2-dummy
-        echo "Architecture: all" >> libasound2-dummy
-        echo "Maintainer: CI <ci@example.com>" >> libasound2-dummy
-        echo "Description: Dummy package to replace deprecated libasound2" >> libasound2-dummy
-        echo "Depends: libasound2t64" >> libasound2-dummy
-        equivs-build libasound2-dummy
-        sudo dpkg -i libasound2_1.0_all.deb || true
-        
-        # Create dummy libgconf-2-4 package
         echo "Package: libgconf-2-4" > libgconf-dummy
         echo "Version: 1.0" >> libgconf-dummy
         echo "Architecture: all" >> libgconf-dummy
@@ -102,6 +93,9 @@ jobs:
         echo "Description: Dummy package to replace deprecated libgconf-2-4" >> libgconf-dummy
         equivs-build libgconf-dummy
         sudo dpkg -i libgconf-2-4_1.0_all.deb || true
+        
+        # Create symlinks for libasound2 compatibility
+        sudo ln -sf /usr/lib/x86_64-linux-gnu/libasound.so.2 /usr/lib/x86_64-linux-gnu/libasound.so.2.0.0 || true
 
     - name: Verify setup
       run: |
