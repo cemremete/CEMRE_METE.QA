@@ -124,15 +124,21 @@ def _get_chrome_driver(headless_mode, window_size):
     chrome_options.add_argument("--disable-web-security")
     chrome_options.add_argument("--allow-running-insecure-content")
     chrome_options.add_argument(f"--window-size={window_size[0]},{window_size[1]}")
-    
+
     # Performance optimizations
     chrome_options.add_argument("--disable-logging")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-background-timer-throttling")
     chrome_options.add_argument("--disable-backgrounding-occluded-windows")
     chrome_options.add_argument("--disable-renderer-backgrounding")
+
+    # CI/CD specific options
+    chrome_options.add_argument("--disable-software-rasterizer")
+    chrome_options.add_argument("--remote-debugging-port=9222")
+    chrome_options.add_argument("--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
     
-    service = ChromeService(r"C:\Users\cemre\Documents\chromedriver\chromedriver.exe")
+    # Use WebDriverManager for automatic driver management
+    service = ChromeService(ChromeDriverManager().install())
     return webdriver.Chrome(service=service, options=chrome_options)
 
 
@@ -146,6 +152,11 @@ def _get_firefox_driver(headless_mode, window_size):
     # Firefox-specific options
     firefox_options.add_argument(f"--width={window_size[0]}")
     firefox_options.add_argument(f"--height={window_size[1]}")
+
+    # CI/CD specific options for Firefox
+    firefox_options.set_preference("dom.webdriver.enabled", False)
+    firefox_options.set_preference("useAutomationExtension", False)
+    firefox_options.set_preference("general.useragent.override", "Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101 Firefox/91.0")
     
     service = FirefoxService(GeckoDriverManager().install())
     return webdriver.Firefox(service=service, options=firefox_options)
