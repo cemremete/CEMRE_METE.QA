@@ -81,8 +81,8 @@ insider_test_automation/
 
 ### 1. Clone the Repository
 ```bash
-git clone <repository-url>
-cd insider_test_automation
+git clone https://github.com/cemremete/test-automation-project.git
+cd test-automation-project
 ```
 
 ### 2. Create Virtual Environment

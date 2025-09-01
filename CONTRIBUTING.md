@@ -1,412 +1,314 @@
 # Contributing to Insider Test Automation Project
 
-Thank you for your interest in contributing to the Insider Test Automation Project! This document provides guidelines and information for contributors.
-
-## 📋 Table of Contents
-
-- [Code of Conduct](#code-of-conduct)
-- [Getting Started](#getting-started)
-- [Development Setup](#development-setup)
-- [Project Structure](#project-structure)
-- [Coding Standards](#coding-standards)
-- [Testing Guidelines](#testing-guidelines)
-- [Submitting Changes](#submitting-changes)
-- [Reporting Issues](#reporting-issues)
-- [Documentation](#documentation)
-
-## 🤝 Code of Conduct
-
-This project follows a code of conduct to ensure a welcoming environment for all contributors. By participating, you agree to:
-
-- Be respectful and inclusive
-- Focus on constructive feedback
-- Accept responsibility for mistakes
-- Show empathy towards other contributors
-- Help create a positive community
-
 ## 🚀 Getting Started
 
 ### Prerequisites
-
 - Python 3.8 or higher
-- pip (Python package manager)
 - Git
-- Chrome, Firefox, or Safari browser
 - VS Code (recommended) or any Python IDE
+- Chrome, Firefox, or Safari browser
 
-### Quick Setup
+### Development Environment Setup
 
-1. **Fork the repository** on GitHub
-2. **Clone your fork:**
-   ```bash
-   git clone https://github.com/your-username/test-automation-project.git
-   cd test-automation-project
-   ```
-3. **Create a virtual environment:**
-   ```bash
-   python -m venv venv
-   # Windows
-   venv\Scripts\activate
-   # macOS/Linux
-   source venv/bin/activate
-   ```
-4. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-5. **Verify installation:**
-   ```bash
-   pytest --version
-   ```
-
-## 🛠️ Development Setup
-
-### VS Code Setup (Recommended)
-
-1. **Install recommended extensions:**
-   - Python (Microsoft)
-   - Pylint
-   - Python Docstring Generator
-   - GitLens
-   - Test Explorer
-
-2. **Configure Python interpreter:**
-   - Open Command Palette (Ctrl+Shift+P)
-   - Select "Python: Select Interpreter"
-   - Choose the virtual environment
-
-3. **Enable testing:**
-   - Open Test Explorer
-   - Configure test settings for pytest
-
-### Manual Setup
-
-If you prefer other IDEs, ensure you have:
-- Python interpreter configured
-- Virtual environment activated
-- Linting tools available
-- Git integration
-
-## 🏗️ Project Structure
-
-```
-insider_test_automation/
-├── pages/                          # Page Object Model classes
-│   ├── __init__.py
-│   ├── base_page.py                # Base page with common methods
-│   ├── popup_page.py               # Pop-up specific methods
-│   └── product_page.py             # Product page methods
-├── tests/                          # Test files
-│   ├── __init__.py
-│   ├── conftest.py                 # Pytest configuration
-│   ├── test_popup_functionality.py # Core functionality tests
-│   ├── test_performance_responsive.py # Performance tests
-│   └── test_cross_browser.py       # Browser compatibility tests
-├── utils/                          # Utility modules
-│   ├── __init__.py
-│   ├── driver_manager.py           # WebDriver management
-│   ├── screenshot_helper.py        # Screenshot utilities
-│   └── test_data.py                # Test data management
-├── screenshots/                    # Test screenshots
-├── reports/                        # Test reports
-├── comprehensive_test_matrix.md    # Test case matrix
-├── bug_report_template.md          # Bug reporting template
-├── requirements.txt                # Python dependencies
-├── pytest.ini                     # Pytest configuration
-├── conftest.py                     # Global test configuration
-├── .gitignore                      # Git ignore rules
-├── README.md                       # Project documentation
-└── CONTRIBUTING.md                # This file
-```
-
-## 💻 Coding Standards
-
-### Python Style Guide
-
-This project follows PEP 8 with some modifications:
-
-- **Line length:** 100 characters
-- **Indentation:** 4 spaces
-- **Naming conventions:**
-  - Classes: `CamelCase`
-  - Functions/methods: `snake_case`
-  - Constants: `UPPER_CASE`
-  - Private methods: `_private_method`
-
-### Code Quality Tools
-
-We use several tools to maintain code quality:
-
+#### 1. Clone the Repository
 ```bash
-# Run linting
-pylint pages/ tests/ utils/
-
-# Format code
-black --line-length 100 .
-
-# Type checking (if using mypy)
-mypy .
-
-# Run tests with coverage
-pytest --cov=pages --cov=utils --cov-report=html
+git clone https://github.com/cemremete/test-automation-project.git
+cd test-automation-project
 ```
 
-### Docstring Standards
+#### 2. Create Virtual Environment
+```bash
+python -m venv venv
 
-Use Google-style docstrings:
+# Windows
+venv\Scripts\activate
 
-```python
-def check_browser_compatibility(self, browser_name):
-    """
-    Check browser compatibility for popup functionality.
-
-    Args:
-        browser_name: Name of the browser being tested
-
-    Returns:
-        Dictionary with compatibility results
-
-    Raises:
-        ValueError: If browser_name is not supported
-    """
+# macOS/Linux
+source venv/bin/activate
 ```
 
-## 🧪 Testing Guidelines
+#### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
 
-### Test Organization
+#### 4. Verify Installation
+```bash
+pytest --version
+python -c "import selenium; print(f'Selenium version: {selenium.__version__}')"
+```
 
-- **Unit tests:** Test individual functions/methods
-- **Integration tests:** Test component interactions
-- **End-to-end tests:** Test complete user workflows
-- **Performance tests:** Test speed and resource usage
+## 🛠️ VS Code Configuration
 
-### Test Naming Convention
+### Required Extensions
+- Python (Microsoft)
+- Pylance
+- Python Test Explorer (optional)
 
+### Settings Configuration
+The project includes optimized VS Code settings in `.vscode/settings.json`:
+
+#### Python Interpreter
+- **Windows**: `${workspaceFolder}/venv/Scripts/python.exe`
+- **Linux/macOS**: `${workspaceFolder}/venv/bin/python`
+
+#### Code Quality Tools
+- **Formatting**: Black (auto-format on save)
+- **Linting**: Flake8 with Black-compatible rules
+- **Import Sorting**: isort with Black profile
+- **Type Checking**: Basic mode enabled
+
+#### File Exclusions
+Automatically excludes:
+- `__pycache__/`, `*.pyc` (Python cache)
+- `screenshots/`, `reports/` (Test artifacts)
+- `.coverage`, `htmlcov/` (Coverage reports)
+- `.tox/`, `.mypy_cache/` (Tool caches)
+
+## 🧪 Test Development
+
+### Test Structure
+```
+tests/
+├── popup/           # Popup functionality tests
+├── cross_browser/   # Cross-browser compatibility
+├── mobile/          # Mobile and responsive tests
+├── unit/            # Unit tests
+├── integration/     # Integration tests
+├── utils/           # Test utilities
+├── conftest.py      # Shared fixtures
+└── README.md        # Test documentation
+```
+
+### Test Naming Conventions
+- **Files**: `test_<feature>_<behavior>.py`
+- **Functions**: `test_<expected_behavior>`
+- **Classes**: `Test<FeatureName>`
+
+### Example Test Structure
 ```python
-def test_tc001_popup_display_basic():
-    """Test TC001: Basic popup display functionality."""
-    pass
+import pytest
+from pages.popup_page import PopupPage
 
-def test_tc004_popup_load_performance_detailed():
-    """Test TC004: Detailed popup load performance analysis."""
-    pass
+class TestPopupFunctionality:
+    """Test class for popup functionality validation."""
+    
+    @pytest.mark.critical
+    @pytest.mark.popup
+    def test_popup_displays_correctly(self, driver):
+        """Test that popup displays with correct content."""
+        # Arrange
+        popup_page = PopupPage(driver)
+        
+        # Act
+        popup_page.click_show_instantly_button()
+        
+        # Assert
+        assert popup_page.is_popup_visible()
+        assert popup_page.get_popup_content() == "Expected Content"
 ```
 
 ### Test Markers
-
 Use appropriate markers for test categorization:
 
+#### Priority Markers
+- `@pytest.mark.critical` - P1 Critical tests
+- `@pytest.mark.high` - P2 High priority tests
+- `@pytest.mark.medium` - P3 Medium priority tests
+- `@pytest.mark.low` - P4 Low priority tests
+
+#### Functional Markers
+- `@pytest.mark.smoke` - Smoke tests
+- `@pytest.mark.regression` - Regression tests
+- `@pytest.mark.performance` - Performance tests
+- `@pytest.mark.cross_browser` - Cross-browser tests
+
+#### Feature Markers
+- `@pytest.mark.popup` - Popup functionality
+- `@pytest.mark.mobile` - Mobile/responsive
+- `@pytest.mark.unit` - Unit tests
+- `@pytest.mark.integration` - Integration tests
+
+### Fixtures
+Common fixtures are defined in `conftest.py`:
+- `driver` - WebDriver instance
+- `popup_page` - Popup page object
+- `product_page` - Product page object
+
+### Data-Driven Testing
+Use `@pytest.mark.parametrize` for multiple test scenarios:
+
 ```python
-@pytest.mark.critical
-def test_critical_functionality():
-    """Critical priority test."""
-    pass
-
-@pytest.mark.smoke
-def test_basic_smoke_test():
-    """Quick smoke test."""
-    pass
-
-@pytest.mark.browser_chrome
-def test_chrome_specific_feature():
-    """Chrome-specific test."""
+@pytest.mark.parametrize("browser", ["chrome", "firefox", "safari"])
+def test_cross_browser_compatibility(self, browser):
+    """Test popup functionality across different browsers."""
+    # Test implementation
     pass
 ```
 
-### Writing Effective Tests
+## 📝 Code Style
 
-1. **Arrange-Act-Assert pattern:**
-   ```python
-   def test_popup_display(self, driver):
-       # Arrange
-       popup_page = PopupPage(driver)
+### Python Standards
+- Follow PEP 8 style guide
+- Use Black for code formatting
+- Maximum line length: 88 characters (Black default)
 
-       # Act
-       popup_page.click_show_instantly_button()
+### Import Organization
+- Use isort with Black profile
+- Group imports: standard library, third-party, local
+- Auto-organize imports on save
 
-       # Assert
-       assert popup_page.is_popup_visible()
-   ```
+### Documentation
+- Use docstrings for all public functions and classes
+- Follow Google docstring format
+- Include type hints where appropriate
 
-2. **Use descriptive assertions:**
-   ```python
-   # Good
-   assert popup_page.is_popup_visible(), "Popup should be visible after clicking trigger button"
+## 🚀 Running Tests
 
-   # Bad
-   assert popup_page.is_popup_visible()
-   ```
-
-3. **Handle test data properly:**
-   ```python
-   @pytest.fixture
-   def test_data():
-       return {
-           "expected_content": "Turkish",
-           "timeout": 10
-       }
-
-   def test_content_validation(self, driver, test_data):
-       popup_page = PopupPage(driver)
-       content = popup_page.get_popup_content()
-       assert test_data["expected_content"] in content
-   ```
-
-## 📝 Submitting Changes
-
-### Development Workflow
-
-1. **Create a feature branch:**
-   ```bash
-   git checkout -b feature/your-feature-name
-   # or
-   git checkout -b bugfix/issue-number-description
-   ```
-
-2. **Make your changes:**
-   - Write tests first (TDD approach)
-   - Follow coding standards
-   - Add documentation
-   - Test your changes
-
-3. **Run quality checks:**
-   ```bash
-   # Run tests
-   pytest tests/
-
-   # Run linting
-   pylint pages/ tests/ utils/
-
-   # Format code
-   black --line-length 100 .
-   ```
-
-4. **Commit your changes:**
-   ```bash
-   git add .
-   git commit -m "feat: add new popup validation test
-
-   - Add test for popup content validation
-   - Update test data fixtures
-   - Add screenshot capture on failure"
-   ```
-
-5. **Push and create PR:**
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-
-### Commit Message Format
-
-Use conventional commit format:
-
+### Basic Test Execution
 ```bash
-# Feature
-git commit -m "feat: add cross-browser compatibility tests"
+# Run all tests
+pytest tests/ -v
 
-# Bug fix
-git commit -m "fix: resolve popup loading issue on Firefox"
+# Run specific test category
+pytest tests/popup/ -v
+pytest tests/cross_browser/ -v
 
-# Documentation
-git commit -m "docs: update installation instructions"
-
-# Test
-git commit -m "test: add performance regression tests"
-
-# Refactor
-git commit -m "refactor: simplify page object methods"
+# Run with markers
+pytest -m critical
+pytest -m "smoke and popup"
 ```
 
-### Pull Request Guidelines
+### Using the Test Runner
+```bash
+# Run popup tests
+python run_tests.py --suite popup --browser chrome
 
-1. **Title:** Clear, descriptive title
-2. **Description:** Detailed explanation of changes
-3. **Testing:** How to test the changes
-4. **Screenshots:** Before/after screenshots if UI changes
-5. **Checklist:**
-   - [ ] Tests pass
-   - [ ] Code follows standards
-   - [ ] Documentation updated
-   - [ ] No breaking changes
+# Run cross-browser tests
+python run_tests.py --suite cross-browser --browser firefox
 
-## 🐛 Reporting Issues
+# Run all tests
+python run_tests.py --suite all --browser chrome --headless
+```
 
-### Bug Reports
+### Test Reports
+- **HTML Reports**: `reports/html/`
+- **JSON Reports**: `reports/json/`
+- **Screenshots**: `screenshots/` (failed/passed/evidence)
 
-Use the bug report template (`bug_report_template.md`):
+## 🔧 Development Workflow
 
-1. **Clear title**
-2. **Steps to reproduce**
-3. **Expected vs actual behavior**
-4. **Environment details**
-5. **Screenshots/logs**
-6. **Severity assessment**
+### 1. Create Feature Branch
+```bash
+git checkout -b feature/new-test-suite
+```
 
-### Feature Requests
+### 2. Make Changes
+- Write tests following conventions
+- Update documentation if needed
+- Ensure all tests pass
 
-1. **Clear description**
-2. **Use case justification**
-3. **Proposed implementation**
-4. **Alternatives considered**
+### 3. Test Your Changes
+```bash
+# Run your new tests
+pytest tests/your_new_tests/ -v
 
-### Questions and Support
+# Run related test suites
+pytest -m "related_marker" -v
+```
 
-- Check existing issues first
-- Use clear, descriptive titles
-- Provide context and examples
-- Be patient and respectful
+### 4. Commit Changes
+```bash
+git add .
+git commit -m "feat: Add new test suite for X functionality
 
-## 📚 Documentation
+- Added test cases for feature X
+- Updated documentation
+- Added new markers if needed"
+```
 
-### Documentation Standards
+### 5. Push and Create PR
+```bash
+git push origin feature/new-test-suite
+# Create Pull Request on GitHub
+```
 
-1. **README.md:** Project overview and setup
-2. **Code comments:** Explain complex logic
-3. **Docstrings:** Document all public methods
-4. **Inline comments:** Explain non-obvious code
+## 🐛 Troubleshooting
 
-### Updating Documentation
+### Common Issues
 
-When making changes:
+#### Import Errors
+```bash
+# Ensure virtual environment is activated
+source venv/bin/activate  # macOS/Linux
+venv\Scripts\activate     # Windows
 
-1. Update relevant documentation
-2. Add examples for new features
-3. Update screenshots if UI changes
-4. Review and update README if needed
+# Reinstall dependencies
+pip install -r requirements.txt --force-reinstall
+```
 
-## 🎯 Contribution Areas
+#### WebDriver Issues
+```bash
+# Update WebDriver
+pip install --upgrade webdriver-manager
 
-### High Priority
-- [ ] Performance optimization
-- [ ] Cross-browser compatibility improvements
-- [ ] Mobile responsiveness testing
-- [ ] CI/CD pipeline enhancements
+# Clear cache
+rm -rf ~/.wdm
+```
 
-### Medium Priority
-- [ ] Additional test scenarios
-- [ ] Reporting improvements
-- [ ] Documentation enhancements
-- [ ] Code refactoring
+#### VS Code Issues
+- Ensure Python extension is installed
+- Check interpreter path in settings
+- Reload VS Code window if needed
 
-### Good First Issues
-- [ ] Test data improvements
-- [ ] Screenshot organization
-- [ ] Logging enhancements
-- [ ] Configuration improvements
+### Getting Help
+1. Check existing issues in GitHub
+2. Review this documentation
+3. Check test logs and screenshots
+4. Contact the QA team
 
-## 📞 Getting Help
+## 📊 Quality Standards
 
-- **Issues:** GitHub Issues for bugs and features
-- **Discussions:** GitHub Discussions for questions
-- **Documentation:** Check README and docs first
-- **Community:** Be respectful and helpful
+### Test Coverage
+- Aim for >90% test coverage
+- Include positive and negative test cases
+- Test edge cases and error conditions
 
-## 🙏 Recognition
+### Performance
+- Tests should complete within reasonable time
+- Use `@pytest.mark.slow` for tests >30 seconds
+- Optimize slow tests when possible
 
-Contributors will be recognized in:
-- GitHub Contributors list
-- CHANGELOG.md (future)
-- Release notes
-- Project documentation
+### Reliability
+- Tests should be deterministic
+- Avoid hard-coded waits
+- Use proper assertions and error messages
 
-Thank you for contributing to the Insider Test Automation Project! 🚀
+## 🎯 Best Practices
+
+### Test Design
+- One assertion per test when possible
+- Use descriptive test names
+- Group related tests in classes
+- Keep tests independent
+
+### Page Object Model
+- Encapsulate page interactions in page classes
+- Use locators as class constants
+- Implement wait strategies for elements
+
+### Data Management
+- Use fixtures for test data
+- Avoid hard-coded test data
+- Use factories for complex objects
+
+### Error Handling
+- Capture screenshots on failure
+- Log detailed error information
+- Provide clear failure messages
+
+---
+
+**Thank you for contributing to the Insider Test Automation Project!** 🚀
+
+For questions or suggestions, please open an issue or contact the QA team.

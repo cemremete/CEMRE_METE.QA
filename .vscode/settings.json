@@ -1,6 +1,6 @@
 {
     "python.testing.pytestArgs": [
-        "tests",
+        "tests"
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
@@ -14,24 +14,29 @@
         "--max-line-length=88",
         "--extend-ignore=E203,W503"
     ],
+    "python.analysis.typeCheckingMode": "basic",
     "python.formatting.provider": "black",
     "python.sortImports.args": [
         "--profile",
-        "black",
+        "black"
     ],
+    "python.sortImports.path": "isort",
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-        "source.organizeImports": true,
+        "source.organizeImports": true
     },
-      "files.exclude": {
-    "**/__pycache__": true,
-    "**/*.pyc": true,
-    "**/.pytest_cache": true,
-    "**/screenshots": true,
-    "**/reports": true,
-    "**/.coverage": true,
-    "**/htmlcov": true,
-    "**/.tox": true,
-    "**/.mypy_cache": true
-  },
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/.pytest_cache": true,
+        "**/screenshots": true,
+        "**/reports": true,
+        "**/.coverage": true,
+        "**/htmlcov": true,
+        "**/.tox": true,
+        "**/.mypy_cache": true,
+        "**/coverage.xml": true,
+        "**/*.log": true,
+        "**/.ruff_cache": true
+    }
 }
