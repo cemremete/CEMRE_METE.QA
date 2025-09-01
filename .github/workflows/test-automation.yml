@@ -1,12 +1,17 @@
 name: Insider Test Automation Pipeline - Updated
 
 on:
-  push:
-    branches: [ main, develop ]
   pull_request:
     branches: [ main ]
+    paths:
+      - 'tests/**'
+      - 'pages/**'
+      - 'utils/**'
+      - '.github/workflows/**'
+      - 'requirements.txt'
+      - 'pytest.ini'
   schedule:
-    - cron: '0 2 * * *'
+    - cron: '0 2 * * 1'  # Only Monday at 2 AM
   workflow_dispatch:
     inputs:
       browser:
@@ -17,7 +22,6 @@ on:
         options:
         - chrome
         - firefox
-        - safari
         - all
       test_suite:
         description: 'Test suite to run'
@@ -26,8 +30,6 @@ on:
         type: choice
         options:
         - critical
-        - smoke
-        - regression
         - performance
         - cross_browser
         - all
