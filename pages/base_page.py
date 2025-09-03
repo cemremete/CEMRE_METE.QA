@@ -140,7 +140,7 @@ class BasePage:
             end_time = time.time()
             duration = end_time - start_time
             self._performance_metrics[operation_name] = duration
-            self.logger.debug(f"Operation '{operation_name}' took {duration:.2f}s")
+            self.logger.debug(f"Operation '{operation_name}' completed in {duration:.2f}s")
 
     def get_performance_metrics(self) -> dict:
         """Get collected performance metrics."""
@@ -174,10 +174,10 @@ class BasePage:
         wait_instance = WebDriverWait(self.driver, actual_timeout)
 
         with self.performance_context(f"find_element_{description}"):
-            self.logger.info(f"Finding element: {description}")
+            self.logger.info(f"Locating element: {description}")
             try:
                 element = wait_instance.until(EC.visibility_of_element_located(locator_tuple))
-                self.logger.debug(f"Element found successfully: {description}")
+                self.logger.debug(f"Element located successfully: {description}")
                 return element
             except TimeoutException as e:
                 error_msg = f"Element not found within {actual_timeout}s: {description}"
@@ -210,12 +210,12 @@ class BasePage:
         wait_instance = WebDriverWait(self.driver, actual_timeout)
 
         with self.performance_context(f"find_elements_{description}"):
-            self.logger.info(f"Finding elements: {description}")
+            self.logger.info(f"Locating elements: {description}")
             try:
                 # Wait for at least one element to be present, then return all
                 wait_instance.until(EC.presence_of_element_located(locator_tuple))
                 elements = self.driver.find_elements(*locator_tuple)
-                self.logger.debug(f"Found {len(elements)} elements: {description}")
+                self.logger.debug(f"Located {len(elements)} elements: {description}")
                 return elements
             except TimeoutException:
                 self.logger.warning(f"No elements found within {actual_timeout}s: {description}")
@@ -578,7 +578,7 @@ class BasePage:
             try:
                 element = self.find_element(locator_tuple, timeout)
                 text = element.text or ""
-                self.logger.debug(f"Got text from element: {description} (length: {len(text)})")
+                self.logger.debug(f"Retrieved text from element: {description} (length: {len(text)})")
                 return text
             except (TimeoutException, WebDriverException) as e:
                 error_msg = f"Failed to get text from element: {description}"
@@ -617,7 +617,7 @@ class BasePage:
             try:
                 element = self.find_element(locator_tuple, timeout)
                 value = element.get_attribute(attribute)
-                self.logger.debug(f"Got attribute '{attribute}' from element: {description}")
+                self.logger.debug(f"Retrieved attribute '{attribute}' from element: {description}")
                 return value
             except (TimeoutException, WebDriverException) as e:
                 error_msg = f"Failed to get attribute '{attribute}' from element: {description}"

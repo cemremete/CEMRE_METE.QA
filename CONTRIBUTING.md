@@ -1,6 +1,6 @@
 # Contributing to Insider Test Automation Project
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Python 3.8 or higher
@@ -12,8 +12,8 @@
 
 #### 1. Clone the Repository
 ```bash
-git clone https://github.com/cemremete/test-automation-project.git
-cd test-automation-project
+git clone https://github.com/cemremete/CEMRE_METE.QA.git
+cd CEMRE_METE.QA
 ```
 
 #### 2. Create Virtual Environment
@@ -38,12 +38,14 @@ pytest --version
 python -c "import selenium; print(f'Selenium version: {selenium.__version__}')"
 ```
 
-## 🛠️ VS Code Configuration
+## VS Code Configuration
 
 ### Required Extensions
 - Python (Microsoft)
 - Pylance
 - Python Test Explorer (optional)
+- GitLens (recommended)
+- Python Docstring Generator (recommended)
 
 ### Settings Configuration
 The project includes optimized VS Code settings in `.vscode/settings.json`:
@@ -65,7 +67,7 @@ Automatically excludes:
 - `.coverage`, `htmlcov/` (Coverage reports)
 - `.tox/`, `.mypy_cache/` (Tool caches)
 
-## 🧪 Test Development
+## Test Development
 
 ### Test Structure
 ```
@@ -146,24 +148,34 @@ def test_cross_browser_compatibility(self, browser):
     pass
 ```
 
-## 📝 Code Style
+## Code Style and Standards
 
 ### Python Standards
 - Follow PEP 8 style guide
 - Use Black for code formatting
 - Maximum line length: 88 characters (Black default)
+- Use type hints where appropriate
+- Follow Google docstring format
 
 ### Import Organization
 - Use isort with Black profile
 - Group imports: standard library, third-party, local
 - Auto-organize imports on save
 
-### Documentation
+### Documentation Requirements
 - Use docstrings for all public functions and classes
 - Follow Google docstring format
-- Include type hints where appropriate
+- Include parameter and return type documentation
+- Provide usage examples for complex functions
 
-## 🚀 Running Tests
+### Code Quality Standards
+- Maintain >90% test coverage
+- Use meaningful variable and function names
+- Avoid magic numbers and hard-coded values
+- Implement proper error handling
+- Use logging instead of print statements
+
+## Running Tests
 
 ### Basic Test Execution
 ```bash
@@ -196,7 +208,7 @@ python run_tests.py --suite all --browser chrome --headless
 - **JSON Reports**: `reports/json/`
 - **Screenshots**: `screenshots/` (failed/passed/evidence)
 
-## 🔧 Development Workflow
+## Development Workflow
 
 ### 1. Create Feature Branch
 ```bash
@@ -207,6 +219,7 @@ git checkout -b feature/new-test-suite
 - Write tests following conventions
 - Update documentation if needed
 - Ensure all tests pass
+- Run code quality checks
 
 ### 3. Test Your Changes
 ```bash
@@ -215,6 +228,10 @@ pytest tests/your_new_tests/ -v
 
 # Run related test suites
 pytest -m "related_marker" -v
+
+# Run code quality checks
+black --check .
+flake8 .
 ```
 
 ### 4. Commit Changes
@@ -233,7 +250,39 @@ git push origin feature/new-test-suite
 # Create Pull Request on GitHub
 ```
 
-## 🐛 Troubleshooting
+## Pull Request Guidelines
+
+### PR Requirements
+- All tests must pass
+- Code coverage should not decrease
+- Follow coding standards
+- Include appropriate documentation
+- Add relevant test markers
+
+### PR Description Template
+```markdown
+## Description
+Brief description of changes
+
+## Type of Change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Breaking change
+- [ ] Documentation update
+
+## Testing
+- [ ] Unit tests added/updated
+- [ ] Integration tests added/updated
+- [ ] Manual testing completed
+
+## Checklist
+- [ ] Code follows style guidelines
+- [ ] Self-review completed
+- [ ] Documentation updated
+- [ ] Tests pass locally
+```
+
+## Troubleshooting
 
 ### Common Issues
 
@@ -260,55 +309,104 @@ rm -rf ~/.wdm
 - Ensure Python extension is installed
 - Check interpreter path in settings
 - Reload VS Code window if needed
+- Verify workspace settings are applied
 
 ### Getting Help
 1. Check existing issues in GitHub
 2. Review this documentation
 3. Check test logs and screenshots
 4. Contact the QA team
+5. Review project README.md
 
-## 📊 Quality Standards
+## Quality Standards
 
 ### Test Coverage
 - Aim for >90% test coverage
 - Include positive and negative test cases
 - Test edge cases and error conditions
+- Use coverage reports to identify gaps
 
 ### Performance
 - Tests should complete within reasonable time
 - Use `@pytest.mark.slow` for tests >30 seconds
 - Optimize slow tests when possible
+- Monitor test execution times
 
 ### Reliability
 - Tests should be deterministic
 - Avoid hard-coded waits
 - Use proper assertions and error messages
+- Implement retry mechanisms for flaky tests
 
-## 🎯 Best Practices
+## Best Practices
 
 ### Test Design
 - One assertion per test when possible
 - Use descriptive test names
 - Group related tests in classes
 - Keep tests independent
+- Use AAA pattern (Arrange, Act, Assert)
 
 ### Page Object Model
 - Encapsulate page interactions in page classes
 - Use locators as class constants
 - Implement wait strategies for elements
+- Separate test logic from page logic
 
 ### Data Management
 - Use fixtures for test data
 - Avoid hard-coded test data
 - Use factories for complex objects
+- Implement data cleanup strategies
 
 ### Error Handling
 - Capture screenshots on failure
 - Log detailed error information
 - Provide clear failure messages
+- Implement proper exception handling
+
+### Security Considerations
+- Never commit sensitive data
+- Use environment variables for credentials
+- Implement secure test data management
+- Follow security testing best practices
+
+## Continuous Integration
+
+### GitHub Actions
+The project includes CI/CD pipeline configuration:
+- Automated test execution
+- Code quality checks
+- Security scanning
+- Dependency updates
+
+### Pre-commit Hooks
+Install pre-commit hooks for code quality:
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+## Documentation Standards
+
+### Code Documentation
+- Use clear, concise docstrings
+- Include examples for complex functions
+- Document parameters and return values
+- Keep documentation up to date
+
+### Test Documentation
+- Document test scenarios and expected outcomes
+- Include bug reproduction steps
+- Maintain test case matrices
+- Update documentation with changes
 
 ---
 
-**Thank you for contributing to the Insider Test Automation Project!** 🚀
+**Thank you for contributing to the Insider Test Automation Project!**
 
 For questions or suggestions, please open an issue or contact the QA team.
+
+**Maintainer:** Senior QA Automation Engineer  
+**Last Updated:** September 3, 2025  
+**Version:** 2.0.0

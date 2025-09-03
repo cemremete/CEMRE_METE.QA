@@ -3,11 +3,8 @@ Popup Page Class for Insider Test Automation Project
 Handles popup/modal interactions with enhanced error handling, validation, and locator strategies.
 """
 
-# Fix import path for direct script execution
 import sys
 import os
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 import re
 import logging
 from typing import List, Optional, Dict, Any
@@ -16,6 +13,10 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, WebDriverException
 from pages.base_page import BasePage, ElementLocator, ElementNotFoundException, ElementInteractionException
+
+# Fix import path for direct script execution
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 
 class PopupPage(BasePage):
     """
@@ -43,8 +44,8 @@ class PopupPage(BasePage):
 
     # Additional locators for comprehensive popup handling
     SHOW_INSTANTLY_BUTTON = ElementLocator(
-    By.CSS_SELECTOR, ".btn-show-instantly", "Show instantly trigger button"
-)
+        By.CSS_SELECTOR, ".btn-show-instantly", "Show instantly trigger button"
+    )
     POPUP_TITLE = ElementLocator(
         By.CSS_SELECTOR, ".popup h1, .popup h2, .popup h3, .modal h1, .modal h2, .modal h3, [role='dialog'] h1",
         "Popup title/header"
@@ -229,8 +230,6 @@ class PopupPage(BasePage):
                 self.logger.error(f"Failed to dismiss popup: {e}")
                 self._update_popup_state('dismiss', False, error=str(e))
                 return False
-
-    # Additional methods for comprehensive popup handling
 
     def click_show_instantly_button(self, timeout: Optional[int] = None) -> bool:
         """

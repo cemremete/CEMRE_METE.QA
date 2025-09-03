@@ -205,7 +205,7 @@ def pytest_runtest_makereport(item, call):
                 
                 try:
                     driver.save_screenshot(screenshot_path)
-                    print(f"\n[SUCCESS] Screenshot saved: {screenshot_path}")
+                    print(f"\nScreenshot saved: {screenshot_path}")
                     
                     # Add screenshot path to report for HTML reporting
                     if hasattr(report, 'extra'):
@@ -216,7 +216,7 @@ def pytest_runtest_makereport(item, call):
                         })
                     
                 except Exception as e:
-                    print(f"\n[ERROR] Failed to take screenshot: {str(e)}")
+                    print(f"\nFailed to take screenshot: {str(e)}")
             
             elif report.passed:
                 # Optionally take screenshot on success (for documentation)
@@ -225,9 +225,9 @@ def pytest_runtest_makereport(item, call):
                 
                 try:
                     driver.save_screenshot(screenshot_path)
-                    print(f"\n[SUCCESS] Success screenshot saved: {screenshot_path}")
+                    print(f"\nSuccess screenshot saved: {screenshot_path}")
                 except Exception as e:
-                    print(f"\n[WARNING] Failed to take success screenshot: {str(e)}")
+                    print(f"\nFailed to take success screenshot: {str(e)}")
 
 
 def pytest_configure(config):
@@ -327,7 +327,7 @@ def performance_timer():
     yield
     end_time = time.time()
     execution_time = end_time - start_time
-    print(f"\n[TIMER] Test execution time: {execution_time:.2f} seconds")
+    print(f"\nTest execution time: {execution_time:.2f} seconds")
 
 
 # Custom assertion helpers

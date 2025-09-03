@@ -2,19 +2,17 @@
 Core Popup Functionality Tests for Insider Test Automation Project
 Tests based on manual test findings and critical bug reproduction.
 """
-"""
-Test suite for popup functionality
-"""
+
 import pytest
 import time
-
-# IMPORT HATA ÇÖZÜMÜ - Bu kodları buraya yaz
 import sys
 import os
+
+# Fix import path for direct script execution
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pages.popup_page import PopupPage
 from pages.product_page import ProductPage
-from utils.data_manager import DataManager  # Corrected import path
+from utils.data_manager import DataManager
 from utils.test_data import TestUrlData
 
 
@@ -28,7 +26,7 @@ class TestPopupFunctionality:
         self.test_url = test_url
         self.popup_page = PopupPage(driver)
         self.product_page = ProductPage(driver)
-        self.test_data_manager = DataManager(driver)  # Corrected class name
+        self.test_data_manager = DataManager(driver)
         
         # Navigate to test URL
         self.driver.get(test_url)
@@ -203,7 +201,6 @@ class TestPopupFunctionality:
             assert load_time <= expected_limit, f"Pop-up loaded in {load_time}s (within {expected_limit}s limit)"
     
     @pytest.mark.critical
-    @pytest.mark.critical 
     def test_tc010_product_popup_content_matching(self):
         """
         TC010: Product-Popup Content Matching
@@ -211,7 +208,7 @@ class TestPopupFunctionality:
         Expected: Pop-up product matches page product
         """
         # Navigate to a specific product page (Mug)
-        mug_product_url = f"{TestUrlData.BASE_URL}?product=mug"  # Adjust URL as needed
+        mug_product_url = f"{TestUrlData.BASE_URL}?product=mug"
         self.driver.get(mug_product_url)
         time.sleep(2)
         
@@ -235,7 +232,6 @@ class TestPopupFunctionality:
             self.test_data_manager.take_screenshot("TC010_content_mapping_pass")
             assert True, "Product content mapping is correct"
     
-    @pytest.mark.critical
     @pytest.mark.critical
     def test_tc023_add_to_cart_functionality(self):
         """
@@ -284,7 +280,7 @@ class TestPopupFunctionality:
         assert popup_content or popup_title, "Pop-up should have visible content"
         
         # Check for expected content (based on manual findings)
-        expected_content = ["Turkish", "English"]  # Adjust based on actual expected content
+        expected_content = ["Turkish", "English"]
         
         content_found = False
         for expected in expected_content:
@@ -331,18 +327,7 @@ class TestPopupFunctionality:
             self.test_data_manager.take_screenshot("TC006_redisplay_fail")
             pytest.fail("Pop-up failed to redisplay after being closed")
     
-    def teardown_method(self):
-        """Cleanup after each test method."""
-        try:
-            # Generate bug reproduction report
-            if hasattr(self, 'test_data_manager'):
-                bug_report = self.test_data_manager.generate_bug_reproduction_report()
-                print(f"\n📊 Bug Reproduction Summary: {bug_report['bugs_reproduced']}/{bug_report['total_bugs_tested']} bugs reproduced")
-        except Exception as e:
-            print(f"Error in teardown: {e}")
-# ============================================================================
-    # CROSS-BROWSER COMPATIBILITY TESTS
-    # ============================================================================
+    # Cross-Browser Compatibility Tests
     
     @pytest.mark.critical
     @pytest.mark.browser
@@ -463,9 +448,7 @@ class TestPopupFunctionality:
             self.test_data_manager.take_screenshot(f"TC020_{current_browser}_no_trigger")
             pytest.fail(f"BUG005 confirmed: Cross-browser trigger button not found in {current_browser}")
     
-    # ============================================================================
-    # MOBILE TESTING
-    # ============================================================================
+    # Mobile Testing
     
     @pytest.mark.critical
     @pytest.mark.mobile
@@ -542,3 +525,13 @@ class TestPopupFunctionality:
             # Tablet trigger button issue
             self.test_data_manager.take_screenshot("TC022_tablet_no_trigger")
             pytest.fail("BUG004 confirmed: Tablet trigger button not found")
+
+    def teardown_method(self):
+        """Cleanup after each test method."""
+        try:
+            # Generate bug reproduction report
+            if hasattr(self, 'test_data_manager'):
+                bug_report = self.test_data_manager.generate_bug_reproduction_report()
+                print(f"\nBug Reproduction Summary: {bug_report['bugs_reproduced']}/{bug_report['total_bugs_tested']} bugs reproduced")
+        except Exception as e:
+            print(f"Error in teardown: {e}")

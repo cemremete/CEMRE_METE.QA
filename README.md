@@ -1,29 +1,29 @@
 # Insider Test Automation Project - Onsite Experiment Pop-up
 
-## 🎯 Project Overview
+## Project Overview
 
-This project contains automated test suite for Insider company's "Onsite Experiment" pop-up campaign. The project implements comprehensive test automation using Python, Selenium WebDriver, and Page Object Model (POM) design pattern.
+This project contains a comprehensive automated test suite for Insider company's "Onsite Experiment" pop-up campaign. The project implements test automation using Python, Selenium WebDriver, and Page Object Model (POM) design pattern with industry-standard practices.
 
-### 📊 Automated Test Results Summary
+### Automated Test Results Summary
 
 - **Test URL:** https://piratesquad.rocks/?campBuilderTest=1&insBuild=MTYwODc=&insVar=YzE3MjU=&routeAlias=custom&queryHash=77e2ecf59905618c6426e9aa8cf7407c47293623d7496e3148944c81aeffce95
 - **Total Automated Tests:** 13 scenarios
-- **✅ PASSED:** 3 tests (23.1%)
-- **❌ FAILED (Bug Reproduction):** 6 tests (46.2%)
-- **⏭️ SKIPPED:** 4 tests (30.8%)
-- **🔄 Test Execution Time:** 5 minutes 40 seconds
+- **PASSED:** 3 tests (23.1%)
+- **FAILED (Bug Reproduction):** 6 tests (46.2%)
+- **SKIPPED:** 4 tests (30.8%)
+- **Test Execution Time:** 5 minutes 40 seconds
 
-### 🚨 Production Readiness: **NO-GO**
+### Production Readiness Assessment: NOT READY
 
-**Critical Issues Reproduced:**
-- ✅ BUG001: URL parameter dependency (System unusable)
-- ✅ BUG002: Add to Cart functionality broken (Revenue impact)
-- ✅ BUG004: Mobile/Tablet 0% functionality (60%+ users affected)
-- ✅ BUG005: Firefox/Safari complete failure (40%+ browsers affected)
-- ⚠️ Performance issues: Load time exceeds standards
-- ⚠️ Content mapping issues detected
+**Critical Issues Identified:**
+- BUG001: URL parameter dependency (System unusable)
+- BUG002: Add to Cart functionality broken (Revenue impact)
+- BUG004: Mobile/Tablet 0% functionality (60%+ users affected)
+- BUG005: Firefox/Safari complete failure (40%+ browsers affected)
+- Performance issues: Load time exceeds standards
+- Content mapping issues detected
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 insider_test_automation/
@@ -35,18 +35,21 @@ insider_test_automation/
 ├── tests/                          # Test files
 │   ├── __init__.py
 │   ├── conftest.py                 # Pytest configuration
-│   ├── test_popup_functionality.py # Core functionality tests
-│   ├── test_popup_performance.py   # Performance tests
-│   └── test_cross_browser.py       # Browser compatibility tests
+│   ├── popup/
+│   │   └── test_popup_functionality.py # Core functionality tests
+│   ├── cross_browser/
+│   │   └── test_cross_browser.py   # Browser compatibility tests
+│   └── mobile/
+│       └── test_performance_responsive.py # Performance tests
 ├── utils/                          # Utility modules
 │   ├── __init__.py
 │   ├── driver_manager.py           # WebDriver management
 │   ├── screenshot_helper.py        # Screenshot utilities
 │   └── test_data.py                # Test data management
 ├── screenshots/                    # Test screenshots
-│   ├── failed/                     # Failed test screenshots
-│   ├── passed/                     # Passed test screenshots
-│   └── evidence/                   # Evidence screenshots
+│   ├── errors/                     # Failed test screenshots
+│   ├── evidence/                   # Evidence screenshots
+│   └── .gitkeep
 ├── reports/                        # Test reports
 │   ├── html/                       # HTML reports
 │   └── json/                       # JSON reports
@@ -60,7 +63,7 @@ insider_test_automation/
 └── README.md                       # This file
 ```
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 - **Language:** Python 3.8+
 - **Test Framework:** Pytest 7.4+
@@ -70,19 +73,19 @@ insider_test_automation/
 - **Browser Support:** Chrome, Firefox, Safari
 - **CI/CD Ready:** GitHub Actions compatible
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Python 3.8 or higher
 - pip (Python package manager)
 - Chrome, Firefox, or Safari browser
 - Git
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/cemremete/test-automation-project.git
-cd test-automation-project
+git clone https://github.com/cemremete/CEMRE_METE.QA.git
+cd CEMRE_METE.QA
 ```
 
 ### 2. Create Virtual Environment
@@ -107,9 +110,9 @@ pytest --version
 python -c "import selenium; print(f'Selenium version: {selenium.__version__}')"
 ```
 
-### 5. VS Code Setup (Recommended)
+### 5. IDE Setup (Recommended)
 
-For the best development experience, we recommend using Visual Studio Code:
+For optimal development experience, we recommend using Visual Studio Code:
 
 #### Install Recommended Extensions:
 1. **Python** (Microsoft) - Python language support
@@ -129,7 +132,7 @@ For the best development experience, we recommend using Visual Studio Code:
 2. Configure test settings for pytest
 3. Set test discovery to `tests/` directory
 
-#### Useful VS Code Settings:
+#### Recommended IDE Settings:
 ```json
 {
     "python.defaultInterpreterPath": "./venv/Scripts/python.exe",
@@ -146,22 +149,22 @@ For the best development experience, we recommend using Visual Studio Code:
 }
 ```
 
-## 🧪 Running Tests
+## Running Tests
 
 ### Basic Test Execution
 
 ```bash
 # Run all tests
-pytest tests/test_popup_functionality.py -v
+pytest tests/popup/test_popup_functionality.py -v
 
 # Run with verbose output and show all output
-pytest tests/test_popup_functionality.py -v -s
+pytest tests/popup/test_popup_functionality.py -v -s
 
 # Run specific test file (main test suite)
-pytest tests/test_popup_functionality.py
+pytest tests/popup/test_popup_functionality.py
 
 # Run tests with specific marker
-pytest tests/test_popup_functionality.py -m critical
+pytest tests/popup/test_popup_functionality.py -m critical
 ```
 
 ### Browser-Specific Testing
@@ -201,16 +204,16 @@ pytest -n 4
 
 ```bash
 # Generate HTML report
-pytest tests/test_popup_functionality.py --html=reports/test_report.html --self-contained-html
+pytest tests/popup/test_popup_functionality.py --html=reports/test_report.html --self-contained-html
 
 # Generate JSON report
-pytest tests/test_popup_functionality.py --json-report --json-report-file=reports/test_report.json
+pytest tests/popup/test_popup_functionality.py --json-report --json-report-file=reports/test_report.json
 
 # Generate both reports
-pytest tests/test_popup_functionality.py --html=reports/test_report.html --self-contained-html -v
+pytest tests/popup/test_popup_functionality.py --html=reports/test_report.html --self-contained-html -v
 ```
 
-## 📊 Test Categories & Markers
+## Test Categories & Markers
 
 ### Priority Markers
 - `@pytest.mark.critical` - P1 Critical tests
@@ -241,7 +244,7 @@ pytest -m "smoke and browser_chrome"
 pytest -m "not slow"
 ```
 
-## 🐛 Known Issues & Bug Status
+## Known Issues & Bug Status
 
 ### Critical Bugs (P1)
 | Bug ID | Status | Description | Impact |
@@ -261,7 +264,7 @@ pytest -m "not slow"
 | BUG009 | Open | Memory leak detected | System stability |
 | BUG010 | Open | Missing background overlay | UI inconsistency |
 
-## 📈 Test Results Interpretation
+## Test Results Interpretation
 
 ### Success Criteria
 - **Functional Success Rate:** >90% (Currently: 23.1%)
@@ -271,16 +274,17 @@ pytest -m "not slow"
 - **Mobile Support:** Responsive design functional (Currently: 0% functionality)
 - **Test Automation Coverage:** 13 automated test scenarios implemented
 
-### Current Status: 🚨 **FAILED** - Bug Reproduction Successful ✅
+### Current Status: FAILED - Bug Reproduction Successful
+
 The system is **not ready for production** due to multiple critical failures affecting core business functionality, cross-browser compatibility, and mobile responsiveness.
 
-**Automation Project Status: ✅ COMPLETED**
+**Automation Project Status: COMPLETED**
 - All critical bugs successfully reproduced through automation
 - Test framework fully functional with POM implementation
 - Screenshot mechanism working for evidence collection
 - Comprehensive reporting system implemented
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 ```bash
@@ -308,11 +312,11 @@ Edit `utils/test_data.py` to modify:
 - Performance limits
 - Mobile device configurations
 
-## 📸 Screenshots & Evidence
+## Screenshots & Evidence
 
 Screenshots are automatically captured:
-- **Failed tests:** `screenshots/failed/`
-- **Passed tests:** `screenshots/passed/`
+- **Failed tests:** `screenshots/errors/`
+- **Passed tests:** `screenshots/evidence/`
 - **Evidence:** `screenshots/evidence/`
 
 Screenshots include:
@@ -321,7 +325,7 @@ Screenshots include:
 - Failure reason (for failed tests)
 - Browser information
 
-## 🚀 CI/CD Integration
+## CI/CD Integration
 
 ### GitHub Actions Example
 ```yaml
@@ -359,7 +363,7 @@ jobs:
         path: screenshots/
 ```
 
-## 📝 Contributing
+## Contributing
 
 ### Adding New Tests
 1. Create test file in `tests/` directory
@@ -378,7 +382,7 @@ jobs:
 ### Bug Reporting
 Use the template in `bug_report_template.md` for consistent bug reporting.
 
-## 🆘 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -416,10 +420,10 @@ pip install -r requirements.txt --force-reinstall
 pytest -v -s --tb=long
 
 # Run single test with debug
-pytest tests/test_popup_functionality.py::test_popup_display -v -s
+pytest tests/popup/test_popup_functionality.py::test_popup_display -v -s
 ```
 
-## 📞 Support
+## Support
 
 For issues and questions:
 1. Check existing issues in bug report
@@ -427,14 +431,14 @@ For issues and questions:
 3. Check test documentation
 4. Contact QA team
 
-## 📄 License
+## License
 
 This project is proprietary to Insider company for internal testing purposes.
 
 ---
 
-**Last Updated:** September 1, 2025
-**Version:** 1.0.0
-**Test Execution Date:** September 1, 2025
-**Maintainer:** QA Automation Team
-**Project Status:** ✅ COMPLETED - All bugs successfully reproduced
+**Last Updated:** September 3, 2025
+**Version:** 2.0.0
+**Test Execution Date:** September 3, 2025
+**Maintainer:** Senior QA Automation Engineer
+**Project Status:** COMPLETED - All bugs successfully reproduced and documented

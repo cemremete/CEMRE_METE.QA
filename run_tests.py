@@ -51,7 +51,7 @@ class TestExecutor:
     
     def setup_environment(self):
         """Setup test environment and directories."""
-        print("🔧 Setting up test environment...")
+        print("Setting up test environment...")
         
         # Create necessary directories
         directories = [
@@ -64,23 +64,23 @@ class TestExecutor:
         
         for directory in directories:
             Path(directory).mkdir(parents=True, exist_ok=True)
-            print(f"   ✓ Created directory: {directory}")
+            print(f"   Created directory: {directory}")
         
         # Verify Python dependencies
         try:
             import selenium
             import pytest
-            print(f"   ✓ Selenium version: {selenium.__version__}")
-            print(f"   ✓ Pytest available")
+            print(f"   Selenium version: {selenium.__version__}")
+            print(f"   Pytest available")
         except ImportError as e:
-            print(f"   ❌ Missing dependency: {e}")
+            print(f"   Missing dependency: {e}")
             return False
         
         return True
     
     def run_critical_tests(self, browser="chrome", headless=True):
         """Run critical priority tests."""
-        print(f"\n🚨 Running Critical Tests (Browser: {browser})")
+        print(f"\nRunning Critical Tests (Browser: {browser})")
         
         cmd = [
             "pytest",
@@ -107,7 +107,7 @@ class TestExecutor:
         if browsers is None:
             browsers = ["chrome", "firefox"]  # Safari requires macOS
         
-        print(f"\n🌐 Running Cross-Browser Tests")
+        print(f"\nRunning Cross-Browser Tests")
         
         browser_results = {}
         
@@ -135,7 +135,7 @@ class TestExecutor:
     
     def run_performance_tests(self, browser="chrome"):
         """Run performance and responsive design tests."""
-        print(f"\n⚡ Running Performance Tests (Browser: {browser})")
+        print(f"\nRunning Performance Tests (Browser: {browser})")
         
         cmd = [
             "pytest",
@@ -157,7 +157,7 @@ class TestExecutor:
     
     def run_mobile_tests(self, browser="chrome"):
         """Run mobile and responsive tests."""
-        print(f"\n📱 Running Mobile/Responsive Tests (Browser: {browser})")
+        print(f"\nRunning Mobile/Responsive Tests (Browser: {browser})")
         
         cmd = [
             "pytest",
@@ -179,7 +179,7 @@ class TestExecutor:
     
     def run_smoke_tests(self, browser="chrome"):
         """Run smoke tests for quick validation."""
-        print(f"\n💨 Running Smoke Tests (Browser: {browser})")
+        print(f"\nRunning Smoke Tests (Browser: {browser})")
         
         cmd = [
             "pytest",
@@ -200,7 +200,7 @@ class TestExecutor:
     
     def run_popup_tests(self, browser="chrome", headless=True):
         """Run popup-specific functionality tests."""
-        print(f"\n🎯 Running Popup Tests (Browser: {browser})")
+        print(f"\nRunning Popup Tests (Browser: {browser})")
         
         cmd = [
             "pytest",
@@ -223,7 +223,7 @@ class TestExecutor:
     
     def run_unit_tests(self, browser="chrome", headless=True):
         """Run unit tests for individual components."""
-        print(f"\n🧪 Running Unit Tests (Browser: {browser})")
+        print(f"\nRunning Unit Tests (Browser: {browser})")
         
         cmd = [
             "pytest",
@@ -246,7 +246,7 @@ class TestExecutor:
     
     def run_integration_tests(self, browser="chrome", headless=True):
         """Run integration tests for component interactions."""
-        print(f"\n🔗 Running Integration Tests (Browser: {browser})")
+        print(f"\nRunning Integration Tests (Browser: {browser})")
         
         cmd = [
             "pytest",
@@ -269,7 +269,7 @@ class TestExecutor:
     
     def run_full_regression(self, browser="chrome"):
         """Run complete regression test suite."""
-        print(f"\n🔄 Running Full Regression Suite (Browser: {browser})")
+        print(f"\nRunning Full Regression Suite (Browser: {browser})")
         
         # Run all test categories
         results = {}
@@ -321,7 +321,7 @@ class TestExecutor:
                         test_results["summary"] = json_data.get("summary", {})
                         test_results["tests"] = json_data.get("tests", [])
                 except Exception as e:
-                    print(f"   ⚠️ Could not parse JSON report: {e}")
+                    print(f"   Could not parse JSON report: {e}")
             
             # Print summary
             if "summary" in test_results:
@@ -331,16 +331,16 @@ class TestExecutor:
                 failed = summary.get("failed", 0)
                 success_rate = (passed / total * 100) if total > 0 else 0
                 
-                print(f"   📊 Results: {passed}/{total} passed ({success_rate:.1f}%)")
-                print(f"   ⏱️ Execution time: {execution_time:.1f}s")
+                print(f"   Results: {passed}/{total} passed ({success_rate:.1f}%)")
+                print(f"   Execution time: {execution_time:.1f}s")
                 
                 if failed > 0:
-                    print(f"   ⚠️ {failed} tests failed (expected due to known bugs)")
+                    print(f"   {failed} tests failed (expected due to known bugs)")
             
             return test_results
             
         except subprocess.TimeoutExpired:
-            print(f"   ❌ Test execution timed out after 30 minutes")
+            print(f"   Test execution timed out after 30 minutes")
             return {
                 "return_code": -1,
                 "execution_time": 1800,
@@ -348,7 +348,7 @@ class TestExecutor:
                 "success": False
             }
         except Exception as e:
-            print(f"   ❌ Test execution failed: {e}")
+            print(f"   Test execution failed: {e}")
             return {
                 "return_code": -1,
                 "execution_time": 0,
@@ -358,7 +358,7 @@ class TestExecutor:
     
     def generate_comprehensive_report(self):
         """Generate comprehensive test execution report."""
-        print("\n📊 Generating Comprehensive Report...")
+        print("\nGenerating Comprehensive Report...")
         
         end_time = datetime.now()
         total_execution_time = (end_time - self.start_time).total_seconds()
@@ -386,8 +386,8 @@ class TestExecutor:
         # Generate HTML summary
         html_report_path = self._generate_html_summary()
         
-        print(f"   ✓ JSON report saved: {report_path}")
-        print(f"   ✓ HTML summary saved: {html_report_path}")
+        print(f"   JSON report saved: {report_path}")
+        print(f"   HTML summary saved: {html_report_path}")
         
         return report_path, html_report_path
     
@@ -514,14 +514,14 @@ class TestExecutor:
         <body>
             <div class="container">
                 <div class="header">
-                    <h1>🔍 Insider Test Automation Report</h1>
+                    <h1>Insider Test Automation Report</h1>
                     <p><strong>Onsite Experiment Pop-up Campaign</strong></p>
                     <p>Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
-                    <div class="status-not-ready">🚨 PRODUCTION STATUS: NOT READY</div>
+                    <div class="status-not-ready">PRODUCTION STATUS: NOT READY</div>
                 </div>
                 
                 <div class="section critical">
-                    <h2>📊 Manual vs Automated Test Comparison</h2>
+                    <h2>Manual vs Automated Test Comparison</h2>
                     <div class="stats-grid">
                         <div class="stat-card">
                             <h3>Manual Testing</h3>
@@ -537,7 +537,7 @@ class TestExecutor:
                 </div>
                 
                 <div class="section critical">
-                    <h2>🚨 Critical Production Blockers</h2>
+                    <h2>Critical Production Blockers</h2>
                     <ul class="bug-list">
                         <li class="bug-item"><strong>BUG001:</strong> URL parameter dependency - System unusable</li>
                         <li class="bug-item"><strong>BUG002:</strong> Add to Cart not working - Revenue impact</li>
@@ -548,7 +548,7 @@ class TestExecutor:
                 </div>
                 
                 <div class="section warning">
-                    <h2>⚠️ High Priority Issues</h2>
+                    <h2>High Priority Issues</h2>
                     <ul>
                         <li><strong>BUG006:</strong> Performance 4.49s delay (>2s standard)</li>
                         <li><strong>BUG008:</strong> Close buttons not working</li>
@@ -558,19 +558,19 @@ class TestExecutor:
                 </div>
                 
                 <div class="section">
-                    <h2>📋 Minimum Requirements for Production</h2>
+                    <h2>Minimum Requirements for Production</h2>
                     <table>
                         <tr><th>Requirement</th><th>Current Status</th><th>Target</th></tr>
-                        <tr><td>Add to Cart Functionality</td><td>❌ Broken</td><td>✅ 100% Working</td></tr>
-                        <tr><td>Mobile Compatibility</td><td>❌ 0% Functional</td><td>✅ >95% Functional</td></tr>
-                        <tr><td>Cross-Browser Support</td><td>❌ Chrome Only (Partial)</td><td>✅ Chrome, Firefox, Safari</td></tr>
-                        <tr><td>Performance</td><td>❌ 4.49s Load Time</td><td>✅ <2s Load Time</td></tr>
-                        <tr><td>Content Accuracy</td><td>❌ 10% Correct</td><td>✅ >95% Correct</td></tr>
+                        <tr><td>Add to Cart Functionality</td><td>Broken</td><td>100% Working</td></tr>
+                        <tr><td>Mobile Compatibility</td><td>0% Functional</td><td>>95% Functional</td></tr>
+                        <tr><td>Cross-Browser Support</td><td>Chrome Only (Partial)</td><td>Chrome, Firefox, Safari</td></tr>
+                        <tr><td>Performance</td><td>4.49s Load Time</td><td><2s Load Time</td></tr>
+                        <tr><td>Content Accuracy</td><td>10% Correct</td><td>>95% Correct</td></tr>
                     </table>
                 </div>
                 
                 <div class="section">
-                    <h2>🎯 Recommendations</h2>
+                    <h2>Recommendations</h2>
                     <ol>
                         <li><strong>Immediate Action:</strong> Stop any production deployment plans</li>
                         <li><strong>Critical Fixes:</strong> Address all P1 bugs (BUG001, BUG002, BUG004, BUG005, BUG007)</li>
@@ -582,7 +582,7 @@ class TestExecutor:
                 </div>
                 
                 <div class="section">
-                    <h2>📈 Estimated Timeline</h2>
+                    <h2>Estimated Timeline</h2>
                     <p><strong>Production Readiness:</strong> 6-8 weeks with dedicated development team</p>
                     <ul>
                         <li><strong>Week 1-2:</strong> Critical bug fixes (BUG001, BUG002, BUG007)</li>
@@ -610,35 +610,35 @@ class TestExecutor:
     def print_final_summary(self):
         """Print final execution summary."""
         print("\n" + "="*80)
-        print("🎯 INSIDER TEST AUTOMATION - FINAL SUMMARY")
+        print("INSIDER TEST AUTOMATION - FINAL SUMMARY")
         print("="*80)
         
-        print(f"\n📊 MANUAL TEST BASELINE:")
+        print(f"\nMANUAL TEST BASELINE:")
         print(f"   • Total Tests: 35 scenarios")
         print(f"   • Success Rate: 22.9% (8 passed, 23 failed)")
         print(f"   • Critical Bugs: 10 identified")
         
-        print(f"\n🔍 AUTOMATED VALIDATION:")
+        print(f"\nAUTOMATED VALIDATION:")
         print(f"   • Test Suites Created: 3 (Functionality, Cross-Browser, Performance)")
         print(f"   • Bug Reproduction: Expected for critical issues")
         print(f"   • Page Object Model: Fully implemented")
         print(f"   • CI/CD Pipeline: GitHub Actions configured")
         
-        print(f"\n🚨 PRODUCTION READINESS: NOT READY")
+        print(f"\nPRODUCTION READINESS: NOT READY")
         print(f"   • Critical Blockers: 6 bugs")
         print(f"   • Mobile Support: 0% functional")
         print(f"   • Cross-Browser: Firefox/Safari completely broken")
         print(f"   • Performance: 4.49s delay (>2s standard)")
         
-        print(f"\n📋 DELIVERABLES COMPLETED:")
-        print(f"   ✅ Comprehensive test case matrix")
-        print(f"   ✅ Bug categorization and analysis")
-        print(f"   ✅ Page Object Model implementation")
-        print(f"   ✅ Automated test suite (3 categories)")
-        print(f"   ✅ CI/CD pipeline configuration")
-        print(f"   ✅ Advanced reporting system")
+        print(f"\nDELIVERABLES COMPLETED:")
+        print(f"   • Comprehensive test case matrix")
+        print(f"   • Bug categorization and analysis")
+        print(f"   • Page Object Model implementation")
+        print(f"   • Automated test suite (3 categories)")
+        print(f"   • CI/CD pipeline configuration")
+        print(f"   • Advanced reporting system")
         
-        print(f"\n⏱️ ESTIMATED PRODUCTION TIMELINE: 6-8 weeks")
+        print(f"\nESTIMATED PRODUCTION TIMELINE: 6-8 weeks")
         print("="*80)
 
 
@@ -658,7 +658,7 @@ def main():
     if not args.report_only:
         # Setup environment
         if not executor.setup_environment():
-            print("❌ Environment setup failed")
+            print("Environment setup failed")
             sys.exit(1)
         
         # Run selected test suite
@@ -689,7 +689,7 @@ def main():
     # Print final summary
     executor.print_final_summary()
     
-    print(f"\n🎉 Test execution completed! Check reports/ directory for detailed results.")
+    print(f"\nTest execution completed! Check reports/ directory for detailed results.")
 
 
 if __name__ == "__main__":
