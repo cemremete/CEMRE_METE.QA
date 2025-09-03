@@ -1,6 +1,6 @@
 # Test Suite Documentation
 
-## 🏗️ Test Structure
+## Test Structure
 
 This test suite follows a feature-based organization pattern for better maintainability and scalability.
 
@@ -21,7 +21,7 @@ tests/
 └── README.md               # This file
 ```
 
-## 🧪 Running Tests
+## Running Tests
 
 ### Basic Test Execution
 
@@ -48,7 +48,7 @@ pytest -m regression
 - **Unit Tests** (`tests/unit/`): Individual component testing
 - **Integration Tests** (`tests/integration/`): Component interaction testing
 
-## 📊 Test Markers
+## Test Markers
 
 ### Priority Markers
 - `@pytest.mark.critical` - P1 Critical tests
@@ -67,7 +67,7 @@ pytest -m regression
 - `@pytest.mark.browser_firefox` - Firefox-specific tests
 - `@pytest.mark.browser_safari` - Safari-specific tests
 
-## 🔧 Test Conventions
+## Test Conventions
 
 ### Naming Conventions
 - **Test Files**: `test_<feature>.py` (e.g., `test_popup_functionality.py`)
@@ -88,21 +88,21 @@ Common fixtures are defined in `conftest.py`:
 - `popup_page` - Popup page object
 - `product_page` - Product page object
 
-## 📸 Screenshots & Evidence
+## Screenshots & Evidence
 
 Screenshots are automatically captured:
 - **Failed tests**: `screenshots/failed/`
 - **Passed tests**: `screenshots/passed/`
 - **Evidence**: `screenshots/evidence/`
 
-## 🚀 CI/CD Integration
+## CI/CD Integration
 
 Tests run automatically on:
 - **Push to main branch**
 - **Pull requests**
 - **Scheduled runs** (if configured)
 
-## 🆘 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -133,7 +133,7 @@ pytest tests/popup/test_popup_functionality.py -v
 pytest --collect-only
 ```
 
-## 📝 Adding New Tests
+## Adding New Tests
 
 1. **Create test file** in appropriate category folder
 2. **Follow naming conventions** for files and functions
@@ -141,7 +141,7 @@ pytest --collect-only
 4. **Include docstrings** with test descriptions
 5. **Add to this README** if creating new categories
 
-## 🔍 Test Utilities
+## Test Utilities
 
 Common test utilities are available in `tests/utils/`:
 - Screenshot helpers
