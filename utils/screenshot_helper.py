@@ -5,6 +5,7 @@ Handles automatic screenshot capture for test documentation and failure analysis
 
 import os
 import time
+import logging
 from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont
 
@@ -25,13 +26,23 @@ class ScreenshotHelper:
         self.failed_dir = os.path.join(base_dir, "failed")
         self.passed_dir = os.path.join(base_dir, "passed")
         self.evidence_dir = os.path.join(base_dir, "evidence")
+        self.errors_dir = os.path.join(base_dir, "errors")
+        
+        # Initialize logger
+        self.logger = logging.getLogger(self.__class__.__name__)
         
         # Create directories if they don't exist
         self._create_directories()
     
     def _create_directories(self):
         """Create screenshot directories if they don't exist."""
-        directories = [self.base_dir, self.failed_dir, self.passed_dir, self.evidence_dir]
+        directories = [
+            self.base_dir, 
+            self.failed_dir, 
+            self.passed_dir, 
+            self.evidence_dir,
+            self.errors_dir
+        ]
         for directory in directories:
             os.makedirs(directory, exist_ok=True)
     
@@ -41,7 +52,7 @@ class ScreenshotHelper:
         
         Args:
             test_name: Name of the test
-            status: Screenshot status ('failed', 'passed', 'evidence')
+            status: Screenshot status ('failed', 'passed', 'evidence', 'error')
             description: Optional description for the screenshot
             
         Returns:
@@ -59,6 +70,9 @@ class ScreenshotHelper:
         elif status == "passed":
             directory = self.passed_dir
             prefix = "PASSED"
+        elif status == "error":
+            directory = self.errors_dir
+            prefix = "ERROR"
         else:
             directory = self.evidence_dir
             prefix = "EVIDENCE"
@@ -80,11 +94,11 @@ class ScreenshotHelper:
             if status == "failed":
                 self._add_failure_metadata(filepath, test_name, description)
             
-            print(f"📸 Screenshot saved: {filepath}")
+            self.logger.info(f"Screenshot saved: {filepath}")
             return filepath
             
         except Exception as e:
-            print(f"❌ Failed to take screenshot: {str(e)}")
+            self.logger.error(f"Failed to take screenshot: {str(e)}")
             return None
     
     def take_failure_screenshot(self, test_name, error_message=""):
@@ -125,6 +139,19 @@ class ScreenshotHelper:
             Path to the saved screenshot
         """
         return self.take_screenshot(test_name, "evidence", step_description)
+    
+    def take_error_screenshot(self, test_name, error_context):
+        """
+        Take a screenshot for error documentation.
+        
+        Args:
+            test_name: Name of the test
+            error_context: Context of the error
+            
+        Returns:
+            Path to the saved screenshot
+        """
+        return self.take_screenshot(test_name, "error", error_context)
     
     def take_comparison_screenshots(self, test_name, before_action, after_action):
         """
@@ -194,6 +221,28 @@ class ScreenshotHelper:
         
         return screenshots
     
+    def capture_test_execution_flow(self, test_name, steps):
+        """
+        Capture screenshots for each step of test execution.
+        
+        Args:
+            test_name: Name of the test
+            steps: List of step descriptions
+            
+        Returns:
+            Dictionary with screenshot paths for each step
+        """
+        screenshots = {}
+        
+        for i, step in enumerate(steps, 1):
+            step_key = f"step_{i:02d}"
+            screenshots[step_key] = self.take_evidence_screenshot(
+                test_name, f"step_{i:02d}_{step}"
+            )
+            time.sleep(0.1)  # Small delay between screenshots
+        
+        return screenshots
+    
     def _clean_filename(self, filename):
         """
         Clean filename by removing invalid characters.
@@ -211,6 +260,13 @@ class ScreenshotHelper:
         
         # Replace spaces with underscores
         filename = filename.replace(' ', '_')
+        
+        # Remove multiple underscores
+        while '__' in filename:
+            filename = filename.replace('__', '_')
+        
+        # Remove leading/trailing underscores
+        filename = filename.strip('_')
         
         # Limit length
         if len(filename) > 100:
@@ -235,8 +291,10 @@ class ScreenshotHelper:
             # Try to use a default font, fallback to default if not available
             try:
                 font = ImageFont.truetype("arial.ttf", 16)
+                small_font = ImageFont.truetype("arial.ttf", 12)
             except:
                 font = ImageFont.load_default()
+                small_font = ImageFont.load_default()
             
             # Add red border to indicate failure
             width, height = image.size
@@ -244,20 +302,22 @@ class ScreenshotHelper:
             draw.rectangle([0, 0, width-1, height-1], outline="red", width=border_width)
             
             # Add failure information overlay
-            overlay_height = 80
+            overlay_height = 100
             overlay = Image.new('RGBA', (width, overlay_height), (255, 0, 0, 180))
             overlay_draw = ImageDraw.Draw(overlay)
             
             # Add text to overlay
-            overlay_draw.text((10, 10), f"FAILED: {test_name}", fill="white", font=font)
-            overlay_draw.text((10, 30), f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", 
-                            fill="white", font=font)
+            overlay_draw.text((10, 10), f"TEST FAILED: {test_name}", fill="white", font=font)
+            overlay_draw.text((10, 30), f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", 
+                            fill="white", font=small_font)
+            overlay_draw.text((10, 50), f"Browser: {self._get_browser_info()}", 
+                            fill="white", font=small_font)
             
             if error_message:
                 # Truncate long error messages
                 if len(error_message) > 80:
                     error_message = error_message[:77] + "..."
-                overlay_draw.text((10, 50), f"Error: {error_message}", fill="white", font=font)
+                overlay_draw.text((10, 70), f"Error: {error_message}", fill="white", font=small_font)
             
             # Paste overlay onto image
             image.paste(overlay, (0, 0), overlay)
@@ -266,7 +326,17 @@ class ScreenshotHelper:
             image.save(screenshot_path)
             
         except Exception as e:
-            print(f"⚠️ Failed to add metadata to screenshot: {str(e)}")
+            self.logger.warning(f"Failed to add metadata to screenshot: {str(e)}")
+    
+    def _get_browser_info(self):
+        """Get browser information for metadata."""
+        try:
+            capabilities = self.driver.capabilities
+            browser_name = capabilities.get('browserName', 'Unknown')
+            browser_version = capabilities.get('browserVersion', 'Unknown')
+            return f"{browser_name} {browser_version}"
+        except:
+            return "Unknown Browser"
     
     def create_screenshot_report(self, test_results):
         """
@@ -284,22 +354,140 @@ class ScreenshotHelper:
         <!DOCTYPE html>
         <html>
         <head>
-            <title>Test Screenshots Report</title>
+            <title>Test Screenshots Report - Insider QA Automation</title>
             <style>
-                body { font-family: Arial, sans-serif; margin: 20px; }
-                .test-section { margin-bottom: 30px; border: 1px solid #ddd; padding: 15px; }
-                .test-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
-                .screenshot { margin: 10px 0; }
-                .screenshot img { max-width: 300px; border: 1px solid #ccc; }
-                .failed { border-left: 5px solid red; }
-                .passed { border-left: 5px solid green; }
-                .evidence { border-left: 5px solid blue; }
+                body { 
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                    margin: 20px; 
+                    background-color: #f5f5f5;
+                }
+                .container {
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    background: white;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                }
+                .header {
+                    text-align: center;
+                    margin-bottom: 30px;
+                    border-bottom: 2px solid #007bff;
+                    padding-bottom: 20px;
+                }
+                .test-section { 
+                    margin-bottom: 30px; 
+                    border: 1px solid #ddd; 
+                    padding: 15px; 
+                    border-radius: 5px;
+                }
+                .test-title { 
+                    font-size: 18px; 
+                    font-weight: bold; 
+                    margin-bottom: 10px; 
+                    padding: 10px;
+                    border-radius: 3px;
+                }
+                .screenshot { 
+                    margin: 10px 0; 
+                    display: inline-block;
+                    margin-right: 15px;
+                }
+                .screenshot img { 
+                    max-width: 300px; 
+                    border: 1px solid #ccc; 
+                    border-radius: 3px;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                }
+                .screenshot p {
+                    font-size: 12px;
+                    color: #666;
+                    margin: 5px 0;
+                    max-width: 300px;
+                    word-wrap: break-word;
+                }
+                .failed { 
+                    border-left: 5px solid #dc3545; 
+                    background-color: #f8d7da;
+                }
+                .failed .test-title {
+                    background-color: #dc3545;
+                    color: white;
+                }
+                .passed { 
+                    border-left: 5px solid #28a745; 
+                    background-color: #d4edda;
+                }
+                .passed .test-title {
+                    background-color: #28a745;
+                    color: white;
+                }
+                .evidence { 
+                    border-left: 5px solid #007bff; 
+                    background-color: #d1ecf1;
+                }
+                .evidence .test-title {
+                    background-color: #007bff;
+                    color: white;
+                }
+                .error {
+                    border-left: 5px solid #fd7e14;
+                    background-color: #fff3cd;
+                }
+                .error .test-title {
+                    background-color: #fd7e14;
+                    color: white;
+                }
+                .stats {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 15px;
+                    margin-bottom: 30px;
+                }
+                .stat-card {
+                    background: #f8f9fa;
+                    padding: 15px;
+                    border-radius: 5px;
+                    text-align: center;
+                    border: 1px solid #dee2e6;
+                }
+                .stat-number {
+                    font-size: 24px;
+                    font-weight: bold;
+                    color: #007bff;
+                }
             </style>
         </head>
         <body>
-            <h1>Test Screenshots Report</h1>
-            <p>Generated on: {timestamp}</p>
+            <div class="container">
+                <div class="header">
+                    <h1>Test Screenshots Report</h1>
+                    <p><strong>Insider QA Test Automation Framework</strong></p>
+                    <p>Generated on: {timestamp}</p>
+                </div>
         """.format(timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        
+        # Add statistics
+        total_tests = len(test_results)
+        failed_tests = sum(1 for r in test_results.values() if r.get('status') == 'failed')
+        passed_tests = sum(1 for r in test_results.values() if r.get('status') == 'passed')
+        
+        html_content += f"""
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number">{total_tests}</div>
+                        <div>Total Tests</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{passed_tests}</div>
+                        <div>Passed Tests</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{failed_tests}</div>
+                        <div>Failed Tests</div>
+                    </div>
+                </div>
+        """
         
         for test_name, results in test_results.items():
             status_class = results.get('status', 'evidence')
@@ -321,6 +509,7 @@ class ScreenshotHelper:
             html_content += "</div>"
         
         html_content += """
+            </div>
         </body>
         </html>
         """
@@ -329,11 +518,11 @@ class ScreenshotHelper:
             with open(report_path, 'w', encoding='utf-8') as f:
                 f.write(html_content)
             
-            print(f"📊 Screenshot report created: {report_path}")
+            self.logger.info(f"Screenshot report created: {report_path}")
             return report_path
             
         except Exception as e:
-            print(f"❌ Failed to create screenshot report: {str(e)}")
+            self.logger.error(f"Failed to create screenshot report: {str(e)}")
             return None
     
     def cleanup_old_screenshots(self, days_old=7):
@@ -344,6 +533,7 @@ class ScreenshotHelper:
             days_old: Number of days after which to delete screenshots
         """
         cutoff_time = time.time() - (days_old * 24 * 60 * 60)
+        deleted_count = 0
         
         for root, dirs, files in os.walk(self.base_dir):
             for file in files:
@@ -352,6 +542,51 @@ class ScreenshotHelper:
                     if os.path.getmtime(file_path) < cutoff_time:
                         try:
                             os.remove(file_path)
-                            print(f"🗑️ Deleted old screenshot: {file_path}")
+                            deleted_count += 1
+                            self.logger.info(f"Deleted old screenshot: {file_path}")
                         except Exception as e:
-                            print(f"❌ Failed to delete {file_path}: {str(e)}")
+                            self.logger.error(f"Failed to delete {file_path}: {str(e)}")
+        
+        self.logger.info(f"Cleanup completed: {deleted_count} old screenshots deleted")
+    
+    def get_screenshot_statistics(self):
+        """
+        Get statistics about screenshots in the directory.
+        
+        Returns:
+            Dictionary with screenshot statistics
+        """
+        stats = {
+            'total': 0,
+            'failed': 0,
+            'passed': 0,
+            'evidence': 0,
+            'errors': 0,
+            'total_size_mb': 0
+        }
+        
+        for root, dirs, files in os.walk(self.base_dir):
+            for file in files:
+                if file.endswith('.png'):
+                    file_path = os.path.join(root, file)
+                    stats['total'] += 1
+                    
+                    # Get file size
+                    try:
+                        size = os.path.getsize(file_path)
+                        stats['total_size_mb'] += size / (1024 * 1024)
+                    except:
+                        pass
+                    
+                    # Categorize by directory
+                    if 'failed' in root:
+                        stats['failed'] += 1
+                    elif 'passed' in root:
+                        stats['passed'] += 1
+                    elif 'errors' in root:
+                        stats['errors'] += 1
+                    else:
+                        stats['evidence'] += 1
+        
+        stats['total_size_mb'] = round(stats['total_size_mb'], 2)
+        return stats
