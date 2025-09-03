@@ -24,6 +24,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+from utils.screenshot_helper import ScreenshotHelper
 
 # Configure logging
 logging.basicConfig(
@@ -120,6 +121,8 @@ class BasePage:
         self.wait = WebDriverWait(self.driver, default_timeout)
         self.actions = ActionChains(self.driver)
         self.logger = logging.getLogger(self.__class__.__name__)
+        # Unified screenshot helper
+        self.screenshot_helper = ScreenshotHelper(self.driver, base_dir=SCREENSHOT_DIR)
 
         # Performance tracking
         self._operation_start_time: Optional[float] = None
@@ -457,26 +460,34 @@ class BasePage:
         Raises:
             PageException: If screenshot capture fails.
         """
-        if filename is None:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"screenshot_{timestamp}.png"
+        # Map BasePage subfolder to ScreenshotHelper status
+        status_map = {
+            "errors": "error",
+            "failed": "failed",
+            "passed": "passed",
+            "evidence": "evidence",
+            "general": "evidence"
+        }
+        status = status_map.get(subfolder, "evidence")
 
-        # Ensure filename has .png extension
-        if not filename.lower().endswith('.png'):
-            filename += '.png'
-
-        # Create organized directory structure
-        screenshots_dir = os.path.join(SCREENSHOT_DIR, subfolder)
-        os.makedirs(screenshots_dir, exist_ok=True)
-
-        filepath = os.path.join(screenshots_dir, filename)
+        # Derive description from filename (helper will generate its own file name)
+        description = None
+        if filename:
+            base_name = os.path.splitext(str(filename))[0]
+            description = base_name
 
         with self.performance_context("take_screenshot"):
             try:
-                self.driver.save_screenshot(filepath)
-                self.logger.info(f"Screenshot saved: {filepath}")
-                return filepath
-            except WebDriverException as e:
+                path = self.screenshot_helper.take_screenshot(
+                    test_name=self.__class__.__name__,
+                    status=status,
+                    description=description or ""
+                )
+                if not path:
+                    raise PageException("ScreenshotHelper returned no path")
+                self.logger.info(f"Screenshot saved: {path}")
+                return path
+            except Exception as e:
                 error_msg = f"Failed to take screenshot: {e}"
                 self.logger.error(error_msg)
                 raise PageException(error_msg) from e
@@ -492,9 +503,11 @@ class BasePage:
             Path to the screenshot file, or None if failed.
         """
         try:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"error_{context}_{timestamp}.png"
-            return self.take_screenshot(filename, "errors")
+            path = self.screenshot_helper.take_error_screenshot(
+                test_name=self.__class__.__name__,
+                error_context=str(context)
+            )
+            return path
         except Exception as e:
             self.logger.warning(f"Failed to take error screenshot: {e}")
             return None

@@ -26,7 +26,7 @@ class TestCrossBrowserCompatibility:
         
         # Navigate to test URL
         self.driver.get(test_url)
-        self.product_page.wait_for_page_to_load()
+        self.product_page.wait_for_page_load()
     
     @pytest.mark.critical
     @pytest.mark.cross_browser
