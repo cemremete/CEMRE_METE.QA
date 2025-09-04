@@ -1,6 +1,6 @@
 # Bug Raporu Şablonu - Insider Onsite Experiment Pop-up
 
-## Bug Raporu Tablosu (Excel'e Kopyalanabilir Format)
+## Bug Raporu Tablosu 
 
 | Bug ID | Başlık | Açıklama | Tekrarlama Adımları | Beklenen Sonuç | Gerçek Sonuç | Önem Derecesi | Öncelik | Test Ortamı | Tarayıcı | OS | Bulunan Tarih | Durumu | Atanan Kişi | Ekran Görüntüsü |
 |--------|--------|----------|-------------------|----------------|---------------|---------------|---------|-------------|----------|----|-----------|---------|-----------|--------------| 
