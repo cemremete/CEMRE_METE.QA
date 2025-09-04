@@ -407,6 +407,6 @@ pre-commit install
 
 For questions or suggestions, please open an issue or contact the QA team.
 
-**Maintainer:** Senior QA Automation Engineer  
+**Maintainer:** QA Automation Engineer  
 **Last Updated:** September 3, 2025  
 **Version:** 2.0.0
