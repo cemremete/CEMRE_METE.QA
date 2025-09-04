@@ -1,7 +1,6 @@
 # Insider Onsite Experiment Pop-up Test Senaryoları
 
-## Test Senaryoları Tablosu (Excel'e Kopyalanabilir Format)
-
+## Test Senaryoları Tablosu 
 | Test ID | Test Kategorisi | Test Başlığı | Ön Koşullar | Test Adımları | Beklenen Sonuç | Öncelik | Test Tipi |
 |---------|----------------|--------------|-------------|---------------|----------------|---------|-----------|
 | TC001 | Pozitif | Pop-up Görüntüleme Testi | Tarayıcı açık, test URL'si yüklü | 1. Test panelinde "SHOW INSTANTLY" butonuna tıkla | Pop-up başarıyla görüntülenir, İngilizce içerik doğru görünür | Yüksek | Fonksiyonel |
